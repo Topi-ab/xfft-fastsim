@@ -1,0 +1,23 @@
+# Everything generated: the IP, the C model unzipped from Vivado, the DPI library, the SV package, snapshots,
+# the characterization's runs and results (build/characterize/)
+build/
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+# Result cache (default directory store)
+.sim_cache/
+# Vivado / XSim leftovers when tools run from the repository root
+.Xil/
+*.jou
+*.log
+*.pb
+*.wdb
+xsim.dir/
+webtalk*
+# Editors and OS
+.vscode/
+.idea/
+*.swp
+.DS_Store

@@ -1,0 +1,124 @@
+# Interface reference
+
+The stand-in is the C engine (`model/xfft_engine.c`) behind two thin wrappers with the core's name and ports: the SystemVerilog module (DPI-C, XSim and Verilator) and the VHDL-2008 entity (VHPIDIRECT, NVC and GHDL). This page lists the wrappers, their ports, the package they are built with, the engine's C functions and the files `scripts/build_engine.py` writes. How to use them is in [USER_GUIDE.md](USER_GUIDE.md).
+
+## Wrappers
+
+| File | What |
+|---|---|
+| `model/xfft_engine.sv` | SystemVerilog wrapper (DPI-C, XSim and Verilator): one module, its name a macro (below), imports `xfft_model_pkg` |
+| `model/xfft_engine.vhdl` | VHDL-2008 wrapper (VHPIDIRECT, NVC and GHDL): entity `xfft_core` with the generated core's port names and types, widths from `work.xfft_model_pkg`; `build_engine.py` writes a copy under the configuration's module name when that is not `xfft_core` |
+| `model/xfft_engine.h`, `model/xfft_engine.c` | the engine: all timing and state, in a handle (an int id); one step per rising edge |
+| `model/xfft_dpi.c` | the shim around AMD's C model that the engine calls, compiled into the same library (not exported) |
+
+The SV module's name is a macro, so that it compiles in the place of the generated core:
+
+| Define (`xvlog -d`) | Default | Meaning |
+|---|---|---|
+| `XFFT_CORE_NAME` | `xfft_core` | the generated core's module name |
+| `XFFT_ENGINE_NAME` | `` `XFFT_CORE_NAME `` | the stand-in's module name; set it to another name to have the stand-in and the real core in one simulation |
+
+The SV wrapper imports `xfft_model_pkg` (below), which must be compiled before it, into the same library; the VHDL wrapper uses `work.xfft_model_pkg`.
+
+### Ports
+
+The ports of the xfft core in pipelined streaming I/O with fixed scaling, `XK_INDEX`, `OVFLO` and `aresetn`, by name and width. Widths come from the package (W = `input_width`, `pad8(x)` = x rounded up to whole bytes):
+
+| Port | Direction | Width | Notes |
+|---|---|---|---|
+| `aclk` | in | 1 | everything happens at its rising edge |
+| `aresetn` | in | 1 | active low, sampled at the clock |
+| `s_axis_config_tdata` | in | `XFFT_CONFIG_WIDTH` = pad8(1 + 2 stages) | bit 0 `FWD_INV`, bits 2s+2:2s+1 `SCALE_SCH` of stage s |
+| `s_axis_config_tvalid` | in | 1 | |
+| `s_axis_config_tready` | out | 1 | high while the one-word buffer is empty (after reset) |
+| `s_axis_data_tdata` | in | `XFFT_DATA_WIDTH` = 2 pad8(W) | re in bits W-1:0, im in bits pad8(W)+W-1:pad8(W) |
+| `s_axis_data_tvalid` | in | 1 | |
+| `s_axis_data_tready` | out | 1 | low after reset, while the input buffer is full, and for `FRAME_BOUNDARY_STALL` clocks after a frame |
+| `s_axis_data_tlast` | in | 1 | only checked (events), does not end a frame |
+| `m_axis_data_tdata` | out | `XFFT_DATA_WIDTH` | as the input, each field sign-extended |
+| `m_axis_data_tuser` | out | `XFFT_USER_WIDTH` = pad8(nfft) + 8 | `XK_INDEX` in bits nfft-1:0, `OVFLO` in bit `XFFT_OVFLO_BIT` = pad8(nfft) |
+| `m_axis_data_tvalid` | out | 1 | |
+| `m_axis_data_tready` | in | 1 | non-real-time mode: low stalls the output |
+| `m_axis_data_tlast` | out | 1 | on output sample N - 1 |
+| `m_axis_status_tdata` | out | 8 | bit 0: `OVFLO` of the frame |
+| `m_axis_status_tvalid` | out | 1 | one word per frame |
+| `m_axis_status_tready` | in | 1 | the stand-in queues the words; low does not stall it |
+| `event_frame_started` | out | 1 | one-clock pulse per frame |
+| `event_tlast_unexpected` | out | 1 | `s_axis_data_tlast` high before sample N - 1 |
+| `event_tlast_missing` | out | 1 | `s_axis_data_tlast` low on sample N - 1 |
+| `event_fft_overflow` | out | 1 | the clock after an output handshake with `OVFLO` |
+| `event_status_channel_halt` | out | 1 | always 0 |
+| `event_data_in_channel_halt` | out | 1 | a started frame waits for input |
+| `event_data_out_channel_halt` | out | 1 | the pipeline is paused with the output stalled |
+
+There are no parameters or generics: the configuration is fixed by the package the wrapper is compiled with and the library it is linked with.
+
+### Checks at time 0
+
+At time 0 (`xfft_engine_new()`) the wrapper stops the simulation (`$fatal` in SV, `severity failure` in VHDL, after `xfft_engine_new failed`) when:
+
+- the library was built for another configuration than the package: `xfft_engine: the HDL's configuration (...) is not the one this library was built for (...)`;
+- the package has no timing constants (`XFFT_HAS_TIMING = 0`): `xfft_engine: xfft_model.h has no timing constants for this configuration: measure them first`;
+- the constants break an assumption of the model: `xfft_engine: xfft_model.h does not fit this model (...)`, the message lists the conditions (one clock of delay per stall clock, the config word taken at once, the output of earlier frames held up by input gaps, the last output N - 1 clocks after the first, an output queue that resumes below its pause threshold, ...).
+
+At run time it stops when the C model fails on a frame.
+
+## Package `xfft_model_pkg`
+
+Generated by `scripts/build_engine.py` from `model/xfft_timing.py` (`sv_package()`) into `<dir>/xfft_model_pkg.sv`, and as a VHDL package of the same name into `<dir>/xfft_model_pkg.vhdl` (`vhdl_package()`, `constant XFFT_<NAME>: integer`). In SV all values are `localparam int`:
+
+| Name | Meaning |
+|---|---|
+| `XFFT_N`, `XFFT_NFFT` | transform length and its log2 |
+| `XFFT_STAGES` | `SCALE_SCH` stages, ceil(nfft / 2) |
+| `XFFT_INPUT_WIDTH`, `XFFT_TWIDDLE_WIDTH` | data and phase factor widths |
+| `XFFT_CONVERGENT` | 1 for convergent rounding, 0 for truncation |
+| `XFFT_CONFIG_WIDTH`, `XFFT_DATA_WIDTH`, `XFFT_USER_WIDTH` | port widths |
+| `XFFT_OVFLO_BIT` | the `OVFLO` bit in `m_axis_data_tuser` |
+| `XFFT_HAS_TIMING` | 1 when the timing constants below are known |
+| `XFFT_<constant>` | the 16 timing constants (`LATENCY_FIRST_OUT`, `LATENCY_LAST_OUT`, `INPUT_SLACK`, `OUTPUT_STALL_COST`, `RESET_TO_READY`, `CONFIG_ACCEPT_LOADING`, `FRAME_BOUNDARY_STALL`, `STARVE_HALTS_OUTPUT`, `OUTPUT_HALT_EVENT_AFTER`, `FRAME_STARTED_DELAY`, `STATUS_AFTER_LAST_OUT`, `INPUT_LIMIT`, `OUTPUT_BUFFER`, `INPUT_RESUME`, `PIPELINE_LOOKAHEAD`, `OUTPUT_QUEUE_SIZE`); 0 when unknown |
+
+A testbench may import the package too, for widths and expected latencies (`examples/plain_xsim/tb_tone.sv` does). The first line of the file names the digest of the library's sources, so that a build that hashes its sources sees a new library.
+
+## C engine functions
+
+All arguments are 32-bit integers, so SV `int` and VHDL `integer` alike; `libxfft_engine.so` exports nothing else:
+
+| Function | Meaning |
+|---|---|
+| `int xfft_engine_new(int nfft, int input_width, int twiddle_width, int convergent, int config_width, int data_width, int user_width)` | an engine for one core instance, with its own C model; the arguments are the package's and must equal the configuration the library was built for; also checks the constants (above); -1 on failure (message on stderr) |
+| `void xfft_engine_step(int id, int aresetn, int config_tvalid, int config_tdata, int data_tvalid, int d0, ..., int d4, int data_tlast, int m_data_tready, int m_status_tready, int out[20])` | one rising edge: the inputs sampled at it (single bits 0, 1 or 2 for unknown; the data word in five 16-bit chunks, least significant first); `out` gets every output for the clock after it |
+| `void xfft_engine_free(int id)` | releases an engine |
+| `real xfft_engine_wallclock()` | wall-clock seconds (for speed measurements in testbenches, e.g. the timing bench) |
+
+`out`: 0 `s_axis_config_tready`, 1 `s_axis_data_tready`, 2..6 `m_axis_data_tdata` in 16-bit chunks, 7 `m_axis_data_tuser`, 8 `m_axis_data_tvalid`, 9 `m_axis_data_tlast`, 10 `m_axis_status_tdata`, 11 `m_axis_status_tvalid`, 12..18 the seven events in port order, 19 the error code (0; 1 the C model failed, 2 out of result slots, 3 no such engine or out of memory: the wrappers end the simulation). Before the first step the wrappers drive both `tready` and `event_status_channel_halt` 0 and the other outputs unknown (0 on Verilator, which is 2-state); from the first edge on every output is known. One simulation thread only: the engines' table is global and has no lock (no `--threads` on Verilator).
+
+The architecture is fixed in the C-model shim: pipelined streaming, fixed scaling, no block floating point, as `ip/xfft_core.tcl` generates the core. The C model's header and API names carry the IP version (`xfft_v9_1_bitacc_cmodel.h`, `xilinx_ip_xfft_v9_1_*`); `build_engine.py` reads them from the archive and writes `xfft_cmodel_api.h`, which the shim includes.
+
+## Files `build_engine.py` writes
+
+`python scripts/build_engine.py <dir>` for the configuration of `XFFT_CONFIG` (with `gcc`, or the compiler `CC` names):
+
+| File | What |
+|---|---|
+| `<dir>/xfft_model_pkg.sv` | the SV package above (rewritten when it changes; its first line names the library's digest) |
+| `<dir>/xfft_model_pkg.vhdl` | the same constants as a VHDL package `xfft_model_pkg` |
+| `<dir>/xfft_model.h` | the same constants as C defines, compiled into the library |
+| `<dir>/xfft_engine.vhdl` | the VHDL wrapper under the configuration's module name, only when that is not `xfft_core` |
+| `<dir>/cmodel/` | AMD's C model, unzipped from the generated core's `cmodel` output product |
+| `<dir>/xfft_cmodel_api.h` | includes the C model's header, defines its API prefix |
+| `<dir>/libxfft_engine.so` | the engine and the shim linked against the C model, rpath `$ORIGIN/cmodel` (the `cmodel/` beside it) |
+| `<dir>/build_engine.sha256`, `<dir>/cc.log` | the rebuild stamp and the compiler log |
+
+All three tables come from one function, `xfft_timing.model_values()`; `sv_package()`, `vhdl_package()` and `c_header()` only format it. The library is rebuilt only when its sources, the constants, the script or the C-model archive change. The core is generated (`scripts/generate_ip.py`, Vivado in batch mode) into `build/<tag>/ip_gen/` when it is not there yet.
+
+## Python modules
+
+| Module | For you |
+|---|---|
+| `model/xfft_config.py` | `XfftConfig`, `parse(spec)`, `current()` (from `XFFT_CONFIG`), `config_word(forward, schedule)`, `tag`, the port widths |
+| `model/xfft_timing.py` | `constants(cfg)`, `NAMES`, `TABLE`, the timing rules (`gap_cost()`, `status_delay()`, `status_delay_at()`, ...) |
+| `tests/hdl_sources.py` | `xfft_core(cfg, model)`, `xfft_engine(cfg)`, `fft_model()`, `toplevel_lang(model, sim)`, `simulators()` |
+| `tests/sim_runner.py` | `run(sim=..., ...)`: build and test on XSim (cocotb-vivado), NVC, GHDL or Verilator, cached; `simulators()` |
+| `tests/xfft_tb.py` | `Frame`, `Lane`, `random_frame()`, `reference()`, `check_frame()` |
+| `characterize` | `characterize(...)`, `read_config(xci)`, `config_from_xci(xci)` ([CHARACTERIZATION.md](CHARACTERIZATION.md)) |

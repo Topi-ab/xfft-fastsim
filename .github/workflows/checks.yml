@@ -1,0 +1,45 @@
+# Checks that need no Vivado: the Python unit tests, among them the C engine's input timing against reference
+# vectors measured on the real core (tests/unit/test_engine_gaps.py, built with the runner's gcc), the docs and a
+# dry run. Vivado (XSim, the xfft IP and its C model) cannot run on GitHub's hosted runners: it is not installed
+# there and needs AMD's installer and licence terms. The simulations run where Vivado is installed (a self-hosted
+# runner can run them: source settings64.sh, then pytest tests/ examples/).
+name: checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: gcc --version
+      - run: python -m pytest tests/unit -q
+      - run: python scripts/check_docs.py
+      - run: python -m characterize --nfft 8 --dry-run
+
+  timing:
+    # The stand-in's timing against stored real-core results (tests/test_timing_reference.py): the C engine built
+    # timing-only (no Vivado, no C model), on NVC and GHDL, the simulators' own Ubuntu 24.04 releases
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install NVC 1.23.0 and GHDL 6.0.0
+        run: |
+          cd /tmp
+          curl -sSfLO https://github.com/nickg/nvc/releases/download/r1.23.0/nvc_1.23.0-1_amd64_ubuntu-24.04.deb
+          sudo apt-get install -y ./nvc_1.23.0-1_amd64_ubuntu-24.04.deb libgnat-13 libllvm18 zlib1g
+          curl -sSfL https://github.com/ghdl/ghdl/releases/download/v6.0.0/ghdl-llvm-6.0.0-ubuntu24.04-x86_64.tar.gz \
+            | sudo tar xz -C /opt
+          echo /opt/ghdl-llvm-6.0.0-ubuntu24.04-x86_64/bin >> "$GITHUB_PATH"
+      - run: pip install -r requirements.txt
+      - run: nvc --version && ghdl --version
+      - run: python -m pytest tests/test_timing_reference.py -rA

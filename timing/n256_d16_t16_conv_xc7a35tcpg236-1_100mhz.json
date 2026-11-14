@@ -1,0 +1,3525 @@
+{
+ "config": {
+  "clock_mhz": 100,
+  "input_width": 16,
+  "module": "xfft_core",
+  "nfft": 8,
+  "part": "xc7a35tcpg236-1",
+  "rounding": "convergent",
+  "scaling": "scaled",
+  "twiddle_width": 16
+ },
+ "constants": {
+  "CONFIG_ACCEPT_LOADING": 0,
+  "FRAME_BOUNDARY_STALL": 0,
+  "FRAME_STARTED_DELAY": 6,
+  "INPUT_LIMIT": 655,
+  "INPUT_RESUME": 4,
+  "INPUT_SLACK": 1,
+  "LATENCY_FIRST_OUT": 627,
+  "LATENCY_LAST_OUT": 882,
+  "OUTPUT_BUFFER": 11,
+  "OUTPUT_HALT_EVENT_AFTER": 14,
+  "OUTPUT_QUEUE_SIZE": 16,
+  "OUTPUT_STALL_COST": 1,
+  "PIPELINE_LOOKAHEAD": 3,
+  "RESET_TO_READY": 3,
+  "STARVE_HALTS_OUTPUT": 1,
+  "STATUS_AFTER_LAST_OUT": 1
+ },
+ "core_version": "9.1",
+ "evidence": {
+  "CONFIG_ACCEPT_LOADING": [
+   [
+    "idle_1 word 1",
+    0
+   ],
+   [
+    "idle_2 word 1",
+    0
+   ],
+   [
+    "idle_5 word 1",
+    0
+   ],
+   [
+    "idle_2_gap_1 word 1",
+    0
+   ],
+   [
+    "idle_2_gap_1_then_2 word 1",
+    0
+   ],
+   [
+    "idle_1_after_restart word 1",
+    0
+   ],
+   [
+    "gap_1_then_back_to_back word 1",
+    0
+   ],
+   [
+    "gap_1_then_idle_1 word 1",
+    0
+   ],
+   [
+    "back_to_back word 1",
+    0
+   ],
+   [
+    "back_to_back word 2",
+    0
+   ],
+   [
+    "starve word 1",
+    0
+   ],
+   [
+    "halt_1 word 1",
+    0
+   ],
+   [
+    "halt_1 word 2",
+    0
+   ],
+   [
+    "blocked word 1",
+    0
+   ],
+   [
+    "blocked word 2",
+    0
+   ],
+   [
+    "fifo_backlog word 1",
+    0
+   ],
+   [
+    "fifo_backlog word 2",
+    0
+   ],
+   [
+    "release_3 word 1",
+    0
+   ],
+   [
+    "release_3 word 2",
+    0
+   ],
+   [
+    "release_4 word 1",
+    0
+   ],
+   [
+    "release_4 word 2",
+    0
+   ],
+   [
+    "release_7 word 1",
+    0
+   ],
+   [
+    "release_7 word 2",
+    0
+   ],
+   [
+    "release_10 word 1",
+    0
+   ],
+   [
+    "release_10 word 2",
+    0
+   ],
+   [
+    "stall_then_halt word 1",
+    0
+   ],
+   [
+    "stall_then_halt word 2",
+    0
+   ],
+   [
+    "short_stall_then_halt word 1",
+    0
+   ],
+   [
+    "short_stall_then_halt word 2",
+    0
+   ],
+   [
+    "stall_end_stream_1_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_2_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_3_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_4_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_5_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_6_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_7_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_8_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_9_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_10_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_11_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_12_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_13_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_14_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_15_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_16_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_17_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_18_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_19_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_20_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_21_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_22_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_23_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_24_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_25_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_26_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_27_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_28_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_29_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_30_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_31_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_32_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_33_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_34_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_35_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_36_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_37_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_38_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_39_100 word 1",
+    0
+   ],
+   [
+    "stall_end_stream_40_100 word 1",
+    0
+   ],
+   [
+    "stall_end_idle word 1",
+    0
+   ],
+   [
+    "stall_end_idle word 2",
+    0
+   ],
+   [
+    "stall_end_idle_1 word 1",
+    0
+   ],
+   [
+    "stall_end_idle_1 word 2",
+    0
+   ],
+   [
+    "stall_end_idle_2 word 1",
+    0
+   ],
+   [
+    "stall_end_idle_2 word 2",
+    0
+   ],
+   [
+    "dribble_2_1_2 word 1",
+    0
+   ],
+   [
+    "dribble_2_1_2 word 2",
+    0
+   ],
+   [
+    "dribble_3_1 word 1",
+    0
+   ],
+   [
+    "dribble_3_1 word 2",
+    0
+   ],
+   [
+    "dribble_1_3 word 1",
+    0
+   ],
+   [
+    "dribble_1_3 word 2",
+    0
+   ],
+   [
+    "halt_dense word 1",
+    0
+   ],
+   [
+    "halt_dense word 2",
+    0
+   ],
+   [
+    "halt_boundary word 1",
+    0
+   ],
+   [
+    "halt_boundary word 2",
+    0
+   ],
+   [
+    "halt_boundary word 3",
+    0
+   ],
+   [
+    "halt_tail word 1",
+    0
+   ],
+   [
+    "halt_tail word 2",
+    0
+   ],
+   [
+    "halt_tail word 3",
+    0
+   ],
+   [
+    "halt_tail word 4",
+    0
+   ],
+   [
+    "halt_tail word 5",
+    0
+   ],
+   [
+    "halt_tail word 6",
+    0
+   ],
+   [
+    "halt_tail word 7",
+    0
+   ],
+   [
+    "halt_tail word 8",
+    0
+   ],
+   [
+    "dense_stalls_1 word 1",
+    0
+   ],
+   [
+    "dense_stalls_1 word 2",
+    0
+   ]
+  ],
+  "FRAME_BOUNDARY_STALL": [
+   [
+    "back_to_back",
+    0
+   ],
+   [
+    "back_to_back",
+    0
+   ]
+  ],
+  "FRAME_STARTED_DELAY": [
+   [
+    "ideal frame 0",
+    6
+   ],
+   [
+    "gap_1 frame 0",
+    6
+   ],
+   [
+    "gap_2 frame 0",
+    6
+   ],
+   [
+    "gap_3 frame 0",
+    6
+   ],
+   [
+    "gap_5 frame 0",
+    6
+   ],
+   [
+    "gap_100 frame 0",
+    6
+   ],
+   [
+    "gaps_1_1_d1 frame 0",
+    6
+   ],
+   [
+    "gaps_1_1_d16 frame 0",
+    6
+   ],
+   [
+    "gaps_1_1_d256 frame 0",
+    6
+   ],
+   [
+    "gaps_1_5 frame 0",
+    6
+   ],
+   [
+    "gaps_5_1 frame 0",
+    6
+   ],
+   [
+    "gaps_1_2 frame 0",
+    6
+   ],
+   [
+    "gaps_2_1 frame 0",
+    6
+   ],
+   [
+    "gaps_1_1_1 frame 0",
+    6
+   ],
+   [
+    "gaps_1_1_1_1 frame 0",
+    6
+   ],
+   [
+    "idle_1 frame 0",
+    6
+   ],
+   [
+    "idle_2 frame 0",
+    6
+   ],
+   [
+    "idle_2 frame 1",
+    6
+   ],
+   [
+    "idle_5 frame 0",
+    6
+   ],
+   [
+    "idle_5 frame 1",
+    6
+   ],
+   [
+    "gaps_1_at_1 frame 0",
+    6
+   ],
+   [
+    "gaps_2_1_d1 frame 0",
+    6
+   ],
+   [
+    "idle_2_gap_1 frame 0",
+    6
+   ],
+   [
+    "idle_2_gap_1 frame 1",
+    6
+   ],
+   [
+    "idle_2_gap_1_then_2 frame 0",
+    6
+   ],
+   [
+    "idle_2_gap_1_then_2 frame 1",
+    6
+   ],
+   [
+    "idle_1_after_restart frame 0",
+    6
+   ],
+   [
+    "gap_1_then_back_to_back frame 0",
+    6
+   ],
+   [
+    "gap_1_then_idle_1 frame 0",
+    6
+   ],
+   [
+    "gap_1_then_idle_1 frame 1",
+    6
+   ],
+   [
+    "stall_1 frame 0",
+    6
+   ],
+   [
+    "stall_2 frame 0",
+    6
+   ],
+   [
+    "stall_13 frame 0",
+    6
+   ],
+   [
+    "stall_14 frame 0",
+    6
+   ],
+   [
+    "stall_15 frame 0",
+    6
+   ],
+   [
+    "stall_20 frame 0",
+    6
+   ],
+   [
+    "stall_100 frame 0",
+    6
+   ],
+   [
+    "stalls_1_5 frame 0",
+    6
+   ],
+   [
+    "back_to_back frame 0",
+    6
+   ],
+   [
+    "back_to_back frame 1",
+    6
+   ],
+   [
+    "back_to_back frame 2",
+    6
+   ],
+   [
+    "starve frame 0",
+    6
+   ],
+   [
+    "starve frame 1",
+    6
+   ],
+   [
+    "halt_1 frame 0",
+    6
+   ],
+   [
+    "halt_1 frame 1",
+    6
+   ],
+   [
+    "halt_1 frame 2",
+    6
+   ],
+   [
+    "blocked frame 0",
+    6
+   ],
+   [
+    "blocked frame 1",
+    6
+   ],
+   [
+    "blocked frame 2",
+    6
+   ],
+   [
+    "fifo_backlog frame 0",
+    6
+   ],
+   [
+    "fifo_backlog frame 1",
+    6
+   ],
+   [
+    "fifo_backlog frame 2",
+    6
+   ],
+   [
+    "release_3 frame 0",
+    6
+   ],
+   [
+    "release_3 frame 1",
+    6
+   ],
+   [
+    "release_3 frame 2",
+    6
+   ],
+   [
+    "release_4 frame 0",
+    6
+   ],
+   [
+    "release_4 frame 1",
+    6
+   ],
+   [
+    "release_4 frame 2",
+    6
+   ],
+   [
+    "release_7 frame 0",
+    6
+   ],
+   [
+    "release_7 frame 1",
+    6
+   ],
+   [
+    "release_7 frame 2",
+    6
+   ],
+   [
+    "release_10 frame 0",
+    6
+   ],
+   [
+    "release_10 frame 1",
+    6
+   ],
+   [
+    "release_10 frame 2",
+    6
+   ],
+   [
+    "stall_then_halt frame 0",
+    6
+   ],
+   [
+    "stall_then_halt frame 1",
+    6
+   ],
+   [
+    "stall_then_halt frame 2",
+    6
+   ],
+   [
+    "short_stall_then_halt frame 0",
+    6
+   ],
+   [
+    "short_stall_then_halt frame 1",
+    6
+   ],
+   [
+    "short_stall_then_halt frame 2",
+    6
+   ],
+   [
+    "stall_end_1_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_2_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_3_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_4_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_5_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_6_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_7_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_8_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_9_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_10_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_11_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_12_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_13_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_14_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_15_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_16_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_17_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_18_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_19_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_20_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_21_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_22_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_23_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_24_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_25_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_26_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_27_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_28_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_29_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_30_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_31_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_32_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_33_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_34_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_35_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_36_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_37_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_38_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_39_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_40_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_1_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_1_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_2_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_2_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_3_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_3_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_4_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_4_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_5_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_5_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_6_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_6_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_7_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_7_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_8_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_8_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_9_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_9_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_10_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_10_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_11_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_11_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_12_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_12_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_13_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_13_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_14_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_14_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_15_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_15_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_16_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_16_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_17_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_17_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_18_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_18_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_19_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_19_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_20_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_20_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_21_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_21_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_22_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_22_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_23_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_23_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_24_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_24_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_25_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_25_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_26_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_26_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_27_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_27_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_28_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_28_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_29_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_29_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_30_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_30_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_31_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_31_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_32_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_32_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_33_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_33_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_34_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_34_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_35_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_35_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_36_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_36_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_37_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_37_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_38_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_38_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_39_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_39_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_stream_40_100 frame 0",
+    6
+   ],
+   [
+    "stall_end_stream_40_100 frame 1",
+    6
+   ],
+   [
+    "stall_end_idle frame 0",
+    6
+   ],
+   [
+    "stall_end_idle frame 1",
+    6
+   ],
+   [
+    "stall_end_idle frame 2",
+    6
+   ],
+   [
+    "stall_end_idle_1 frame 0",
+    6
+   ],
+   [
+    "stall_end_idle_2 frame 0",
+    6
+   ],
+   [
+    "stall_end_idle_2 frame 1",
+    6
+   ],
+   [
+    "stall_end_idle_2 frame 2",
+    6
+   ],
+   [
+    "dribble_2_1_2 frame 0",
+    6
+   ],
+   [
+    "dribble_2_1_2 frame 1",
+    6
+   ],
+   [
+    "dribble_2_1_2 frame 2",
+    6
+   ],
+   [
+    "dribble_3_1 frame 0",
+    6
+   ],
+   [
+    "dribble_3_1 frame 1",
+    6
+   ],
+   [
+    "dribble_3_1 frame 2",
+    6
+   ],
+   [
+    "dribble_1_3 frame 0",
+    6
+   ],
+   [
+    "dribble_1_3 frame 1",
+    6
+   ],
+   [
+    "dribble_1_3 frame 2",
+    6
+   ],
+   [
+    "halt_dense frame 0",
+    6
+   ],
+   [
+    "halt_dense frame 1",
+    6
+   ],
+   [
+    "halt_dense frame 2",
+    6
+   ],
+   [
+    "halt_boundary frame 0",
+    6
+   ],
+   [
+    "halt_boundary frame 1",
+    6
+   ],
+   [
+    "halt_boundary frame 2",
+    6
+   ],
+   [
+    "halt_boundary frame 3",
+    6
+   ],
+   [
+    "halt_tail frame 0",
+    6
+   ],
+   [
+    "halt_tail frame 1",
+    6
+   ],
+   [
+    "halt_tail frame 2",
+    6
+   ],
+   [
+    "halt_tail frame 3",
+    6
+   ],
+   [
+    "halt_tail frame 4",
+    6
+   ],
+   [
+    "halt_tail frame 5",
+    6
+   ],
+   [
+    "halt_tail frame 6",
+    6
+   ],
+   [
+    "halt_tail frame 7",
+    6
+   ],
+   [
+    "halt_tail frame 8",
+    6
+   ],
+   [
+    "dense_stalls_1 frame 0",
+    6
+   ]
+  ],
+  "INPUT_LIMIT": [
+   [
+    "blocked",
+    655
+   ]
+  ],
+  "INPUT_RESUME": [
+   [
+    "release_3",
+    0
+   ],
+   [
+    "release_4",
+    1
+   ],
+   [
+    "release_7",
+    1
+   ],
+   [
+    "release_10",
+    1
+   ]
+  ],
+  "INPUT_SLACK": [
+   [
+    "gap_1",
+    0
+   ],
+   [
+    "gap_2",
+    2
+   ],
+   [
+    "gap_3",
+    3
+   ],
+   [
+    "gap_5",
+    5
+   ],
+   [
+    "gap_100",
+    100
+   ]
+  ],
+  "LATENCY_FIRST_OUT": [
+   [
+    "ideal",
+    627
+   ],
+   [
+    "back_to_back",
+    627
+   ],
+   [
+    "back_to_back",
+    627
+   ],
+   [
+    "back_to_back",
+    627
+   ],
+   [
+    "idle_5",
+    627
+   ],
+   [
+    "idle_5",
+    627
+   ],
+   [
+    "stall_1",
+    627
+   ],
+   [
+    "stall_2",
+    627
+   ],
+   [
+    "stall_13",
+    627
+   ],
+   [
+    "stall_14",
+    627
+   ],
+   [
+    "stall_15",
+    627
+   ],
+   [
+    "stall_20",
+    627
+   ],
+   [
+    "stall_100",
+    627
+   ],
+   [
+    "stall_then_halt",
+    627
+   ],
+   [
+    "stall_end_1_100",
+    627
+   ],
+   [
+    "stall_end_2_100",
+    627
+   ],
+   [
+    "stall_end_3_100",
+    627
+   ],
+   [
+    "stall_end_4_100",
+    627
+   ],
+   [
+    "stall_end_5_100",
+    627
+   ],
+   [
+    "stall_end_6_100",
+    627
+   ],
+   [
+    "stall_end_7_100",
+    627
+   ],
+   [
+    "stall_end_8_100",
+    627
+   ],
+   [
+    "stall_end_9_100",
+    627
+   ],
+   [
+    "stall_end_10_100",
+    627
+   ],
+   [
+    "stall_end_11_100",
+    627
+   ],
+   [
+    "stall_end_12_100",
+    627
+   ],
+   [
+    "stall_end_13_100",
+    627
+   ],
+   [
+    "stall_end_14_100",
+    627
+   ],
+   [
+    "stall_end_15_100",
+    627
+   ],
+   [
+    "stall_end_16_100",
+    627
+   ],
+   [
+    "stall_end_17_100",
+    627
+   ],
+   [
+    "stall_end_18_100",
+    627
+   ],
+   [
+    "stall_end_19_100",
+    627
+   ],
+   [
+    "stall_end_20_100",
+    627
+   ],
+   [
+    "stall_end_21_100",
+    627
+   ],
+   [
+    "stall_end_22_100",
+    627
+   ],
+   [
+    "stall_end_23_100",
+    627
+   ],
+   [
+    "stall_end_24_100",
+    627
+   ],
+   [
+    "stall_end_25_100",
+    627
+   ],
+   [
+    "stall_end_26_100",
+    627
+   ],
+   [
+    "stall_end_27_100",
+    627
+   ],
+   [
+    "stall_end_28_100",
+    627
+   ],
+   [
+    "stall_end_29_100",
+    627
+   ],
+   [
+    "stall_end_30_100",
+    627
+   ],
+   [
+    "stall_end_31_100",
+    627
+   ],
+   [
+    "stall_end_32_100",
+    627
+   ],
+   [
+    "stall_end_33_100",
+    627
+   ],
+   [
+    "stall_end_34_100",
+    627
+   ],
+   [
+    "stall_end_35_100",
+    627
+   ],
+   [
+    "stall_end_36_100",
+    627
+   ],
+   [
+    "stall_end_37_100",
+    627
+   ],
+   [
+    "stall_end_38_100",
+    627
+   ],
+   [
+    "stall_end_39_100",
+    627
+   ],
+   [
+    "stall_end_40_100",
+    627
+   ],
+   [
+    "stall_end_stream_1_100",
+    627
+   ],
+   [
+    "stall_end_stream_2_100",
+    627
+   ],
+   [
+    "stall_end_stream_3_100",
+    627
+   ],
+   [
+    "stall_end_stream_4_100",
+    627
+   ],
+   [
+    "stall_end_stream_5_100",
+    627
+   ],
+   [
+    "stall_end_stream_6_100",
+    627
+   ],
+   [
+    "stall_end_stream_7_100",
+    627
+   ],
+   [
+    "stall_end_stream_8_100",
+    627
+   ],
+   [
+    "stall_end_stream_9_100",
+    627
+   ],
+   [
+    "stall_end_stream_10_100",
+    627
+   ],
+   [
+    "stall_end_stream_11_100",
+    627
+   ],
+   [
+    "stall_end_stream_12_100",
+    627
+   ],
+   [
+    "stall_end_stream_13_100",
+    627
+   ],
+   [
+    "stall_end_stream_14_100",
+    627
+   ],
+   [
+    "stall_end_stream_15_100",
+    627
+   ],
+   [
+    "stall_end_stream_16_100",
+    627
+   ],
+   [
+    "stall_end_stream_17_100",
+    627
+   ],
+   [
+    "stall_end_stream_18_100",
+    627
+   ],
+   [
+    "stall_end_stream_19_100",
+    627
+   ],
+   [
+    "stall_end_stream_20_100",
+    627
+   ],
+   [
+    "stall_end_stream_21_100",
+    627
+   ],
+   [
+    "stall_end_stream_22_100",
+    627
+   ],
+   [
+    "stall_end_stream_23_100",
+    627
+   ],
+   [
+    "stall_end_stream_24_100",
+    627
+   ],
+   [
+    "stall_end_stream_25_100",
+    627
+   ],
+   [
+    "stall_end_stream_26_100",
+    627
+   ],
+   [
+    "stall_end_stream_27_100",
+    627
+   ],
+   [
+    "stall_end_stream_28_100",
+    627
+   ],
+   [
+    "stall_end_stream_29_100",
+    627
+   ],
+   [
+    "stall_end_stream_30_100",
+    627
+   ],
+   [
+    "stall_end_stream_31_100",
+    627
+   ],
+   [
+    "stall_end_stream_32_100",
+    627
+   ],
+   [
+    "stall_end_stream_33_100",
+    627
+   ],
+   [
+    "stall_end_stream_34_100",
+    627
+   ],
+   [
+    "stall_end_stream_35_100",
+    627
+   ],
+   [
+    "stall_end_stream_36_100",
+    627
+   ],
+   [
+    "stall_end_stream_37_100",
+    627
+   ],
+   [
+    "stall_end_stream_38_100",
+    627
+   ],
+   [
+    "stall_end_stream_39_100",
+    627
+   ],
+   [
+    "stall_end_stream_40_100",
+    627
+   ],
+   [
+    "stall_end_idle",
+    627
+   ],
+   [
+    "stall_end_idle_1",
+    627
+   ],
+   [
+    "stall_end_idle_2",
+    627
+   ]
+  ],
+  "LATENCY_LAST_OUT": [
+   [
+    "ideal",
+    882
+   ],
+   [
+    "back_to_back",
+    882
+   ],
+   [
+    "back_to_back",
+    882
+   ],
+   [
+    "back_to_back",
+    882
+   ],
+   [
+    "idle_5",
+    882
+   ],
+   [
+    "idle_5",
+    882
+   ]
+  ],
+  "OUTPUT_BUFFER": [
+   [
+    "stall_14",
+    11
+   ],
+   [
+    "stall_15",
+    11
+   ],
+   [
+    "stall_20",
+    11
+   ],
+   [
+    "stall_100",
+    11
+   ]
+  ],
+  "OUTPUT_HALT_EVENT_AFTER": [
+   [
+    "stall_1",
+    0
+   ],
+   [
+    "stall_2",
+    0
+   ],
+   [
+    "stall_13",
+    0
+   ],
+   [
+    "stall_14",
+    3
+   ],
+   [
+    "stall_15",
+    4
+   ],
+   [
+    "stall_20",
+    9
+   ],
+   [
+    "stall_100",
+    89
+   ]
+  ],
+  "OUTPUT_QUEUE_SIZE": [
+   [
+    "largest k on time at the end of the last frame (17) less 1",
+    16
+   ],
+   [
+    "stall_end_1_100",
+    0
+   ],
+   [
+    "stall_end_2_100",
+    0
+   ],
+   [
+    "stall_end_3_100",
+    0
+   ],
+   [
+    "stall_end_4_100",
+    0
+   ],
+   [
+    "stall_end_5_100",
+    0
+   ],
+   [
+    "stall_end_6_100",
+    0
+   ],
+   [
+    "stall_end_7_100",
+    0
+   ],
+   [
+    "stall_end_8_100",
+    0
+   ],
+   [
+    "stall_end_9_100",
+    0
+   ],
+   [
+    "stall_end_10_100",
+    0
+   ],
+   [
+    "stall_end_11_100",
+    0
+   ],
+   [
+    "stall_end_12_100",
+    0
+   ],
+   [
+    "stall_end_13_100",
+    0
+   ],
+   [
+    "stall_end_14_100",
+    0
+   ],
+   [
+    "stall_end_15_100",
+    0
+   ],
+   [
+    "stall_end_16_100",
+    0
+   ],
+   [
+    "stall_end_17_100",
+    0
+   ],
+   [
+    "stall_end_18_100",
+    86
+   ],
+   [
+    "stall_end_19_100",
+    89
+   ],
+   [
+    "stall_end_20_100",
+    89
+   ],
+   [
+    "stall_end_21_100",
+    89
+   ],
+   [
+    "stall_end_22_100",
+    89
+   ],
+   [
+    "stall_end_23_100",
+    89
+   ],
+   [
+    "stall_end_24_100",
+    89
+   ],
+   [
+    "stall_end_25_100",
+    89
+   ],
+   [
+    "stall_end_26_100",
+    89
+   ],
+   [
+    "stall_end_27_100",
+    89
+   ],
+   [
+    "stall_end_28_100",
+    89
+   ],
+   [
+    "stall_end_29_100",
+    89
+   ],
+   [
+    "stall_end_30_100",
+    89
+   ],
+   [
+    "stall_end_31_100",
+    89
+   ],
+   [
+    "stall_end_32_100",
+    89
+   ],
+   [
+    "stall_end_33_100",
+    89
+   ],
+   [
+    "stall_end_34_100",
+    89
+   ],
+   [
+    "stall_end_35_100",
+    89
+   ],
+   [
+    "stall_end_36_100",
+    89
+   ],
+   [
+    "stall_end_37_100",
+    89
+   ],
+   [
+    "stall_end_38_100",
+    89
+   ],
+   [
+    "stall_end_39_100",
+    89
+   ],
+   [
+    "stall_end_40_100",
+    89
+   ]
+  ],
+  "OUTPUT_STALL_COST": [
+   [
+    "stall_1",
+    1
+   ],
+   [
+    "stall_2",
+    1
+   ],
+   [
+    "stall_13",
+    1
+   ],
+   [
+    "stall_14",
+    1
+   ],
+   [
+    "stall_15",
+    1
+   ],
+   [
+    "stall_20",
+    1
+   ],
+   [
+    "stall_100",
+    1
+   ]
+  ],
+  "PIPELINE_LOOKAHEAD": [
+   [
+    "largest k on time in a stream (16) less OUTPUT_HALT_EVENT_AFTER - 1",
+    3
+   ],
+   [
+    "stall_end_stream_1_100",
+    0
+   ],
+   [
+    "stall_end_stream_2_100",
+    0
+   ],
+   [
+    "stall_end_stream_3_100",
+    0
+   ],
+   [
+    "stall_end_stream_4_100",
+    0
+   ],
+   [
+    "stall_end_stream_5_100",
+    0
+   ],
+   [
+    "stall_end_stream_6_100",
+    0
+   ],
+   [
+    "stall_end_stream_7_100",
+    0
+   ],
+   [
+    "stall_end_stream_8_100",
+    0
+   ],
+   [
+    "stall_end_stream_9_100",
+    0
+   ],
+   [
+    "stall_end_stream_10_100",
+    0
+   ],
+   [
+    "stall_end_stream_11_100",
+    0
+   ],
+   [
+    "stall_end_stream_12_100",
+    0
+   ],
+   [
+    "stall_end_stream_13_100",
+    0
+   ],
+   [
+    "stall_end_stream_14_100",
+    0
+   ],
+   [
+    "stall_end_stream_15_100",
+    0
+   ],
+   [
+    "stall_end_stream_16_100",
+    0
+   ],
+   [
+    "stall_end_stream_17_100",
+    89
+   ],
+   [
+    "stall_end_stream_18_100",
+    88
+   ],
+   [
+    "stall_end_stream_19_100",
+    89
+   ],
+   [
+    "stall_end_stream_20_100",
+    89
+   ],
+   [
+    "stall_end_stream_21_100",
+    89
+   ],
+   [
+    "stall_end_stream_22_100",
+    89
+   ],
+   [
+    "stall_end_stream_23_100",
+    89
+   ],
+   [
+    "stall_end_stream_24_100",
+    89
+   ],
+   [
+    "stall_end_stream_25_100",
+    89
+   ],
+   [
+    "stall_end_stream_26_100",
+    89
+   ],
+   [
+    "stall_end_stream_27_100",
+    89
+   ],
+   [
+    "stall_end_stream_28_100",
+    89
+   ],
+   [
+    "stall_end_stream_29_100",
+    89
+   ],
+   [
+    "stall_end_stream_30_100",
+    89
+   ],
+   [
+    "stall_end_stream_31_100",
+    89
+   ],
+   [
+    "stall_end_stream_32_100",
+    89
+   ],
+   [
+    "stall_end_stream_33_100",
+    89
+   ],
+   [
+    "stall_end_stream_34_100",
+    89
+   ],
+   [
+    "stall_end_stream_35_100",
+    89
+   ],
+   [
+    "stall_end_stream_36_100",
+    89
+   ],
+   [
+    "stall_end_stream_37_100",
+    89
+   ],
+   [
+    "stall_end_stream_38_100",
+    89
+   ],
+   [
+    "stall_end_stream_39_100",
+    89
+   ],
+   [
+    "stall_end_stream_40_100",
+    89
+   ]
+  ],
+  "RESET_TO_READY": [
+   [
+    "ideal",
+    3
+   ],
+   [
+    "gap_1",
+    3
+   ],
+   [
+    "gap_2",
+    3
+   ],
+   [
+    "gap_3",
+    3
+   ],
+   [
+    "gap_5",
+    3
+   ],
+   [
+    "gap_100",
+    3
+   ],
+   [
+    "gaps_1_1_d1",
+    3
+   ],
+   [
+    "gaps_1_1_d16",
+    3
+   ],
+   [
+    "gaps_1_1_d256",
+    3
+   ],
+   [
+    "gaps_1_5",
+    3
+   ],
+   [
+    "gaps_5_1",
+    3
+   ],
+   [
+    "gaps_1_2",
+    3
+   ],
+   [
+    "gaps_2_1",
+    3
+   ],
+   [
+    "gaps_1_1_1",
+    3
+   ],
+   [
+    "gaps_1_1_1_1",
+    3
+   ],
+   [
+    "idle_1",
+    3
+   ],
+   [
+    "idle_2",
+    3
+   ],
+   [
+    "idle_5",
+    3
+   ],
+   [
+    "gaps_1_at_1",
+    3
+   ],
+   [
+    "gaps_2_1_d1",
+    3
+   ],
+   [
+    "idle_2_gap_1",
+    3
+   ],
+   [
+    "idle_2_gap_1_then_2",
+    3
+   ],
+   [
+    "idle_1_after_restart",
+    3
+   ],
+   [
+    "gap_1_then_back_to_back",
+    3
+   ],
+   [
+    "gap_1_then_idle_1",
+    3
+   ],
+   [
+    "stall_1",
+    3
+   ],
+   [
+    "stall_2",
+    3
+   ],
+   [
+    "stall_13",
+    3
+   ],
+   [
+    "stall_14",
+    3
+   ],
+   [
+    "stall_15",
+    3
+   ],
+   [
+    "stall_20",
+    3
+   ],
+   [
+    "stall_100",
+    3
+   ],
+   [
+    "stalls_1_5",
+    3
+   ],
+   [
+    "back_to_back",
+    3
+   ],
+   [
+    "starve",
+    3
+   ],
+   [
+    "halt_1",
+    3
+   ],
+   [
+    "blocked",
+    3
+   ],
+   [
+    "fifo_backlog",
+    3
+   ],
+   [
+    "release_3",
+    3
+   ],
+   [
+    "release_4",
+    3
+   ],
+   [
+    "release_7",
+    3
+   ],
+   [
+    "release_10",
+    3
+   ],
+   [
+    "stall_then_halt",
+    3
+   ],
+   [
+    "short_stall_then_halt",
+    3
+   ],
+   [
+    "stall_end_1_100",
+    3
+   ],
+   [
+    "stall_end_2_100",
+    3
+   ],
+   [
+    "stall_end_3_100",
+    3
+   ],
+   [
+    "stall_end_4_100",
+    3
+   ],
+   [
+    "stall_end_5_100",
+    3
+   ],
+   [
+    "stall_end_6_100",
+    3
+   ],
+   [
+    "stall_end_7_100",
+    3
+   ],
+   [
+    "stall_end_8_100",
+    3
+   ],
+   [
+    "stall_end_9_100",
+    3
+   ],
+   [
+    "stall_end_10_100",
+    3
+   ],
+   [
+    "stall_end_11_100",
+    3
+   ],
+   [
+    "stall_end_12_100",
+    3
+   ],
+   [
+    "stall_end_13_100",
+    3
+   ],
+   [
+    "stall_end_14_100",
+    3
+   ],
+   [
+    "stall_end_15_100",
+    3
+   ],
+   [
+    "stall_end_16_100",
+    3
+   ],
+   [
+    "stall_end_17_100",
+    3
+   ],
+   [
+    "stall_end_18_100",
+    3
+   ],
+   [
+    "stall_end_19_100",
+    3
+   ],
+   [
+    "stall_end_20_100",
+    3
+   ],
+   [
+    "stall_end_21_100",
+    3
+   ],
+   [
+    "stall_end_22_100",
+    3
+   ],
+   [
+    "stall_end_23_100",
+    3
+   ],
+   [
+    "stall_end_24_100",
+    3
+   ],
+   [
+    "stall_end_25_100",
+    3
+   ],
+   [
+    "stall_end_26_100",
+    3
+   ],
+   [
+    "stall_end_27_100",
+    3
+   ],
+   [
+    "stall_end_28_100",
+    3
+   ],
+   [
+    "stall_end_29_100",
+    3
+   ],
+   [
+    "stall_end_30_100",
+    3
+   ],
+   [
+    "stall_end_31_100",
+    3
+   ],
+   [
+    "stall_end_32_100",
+    3
+   ],
+   [
+    "stall_end_33_100",
+    3
+   ],
+   [
+    "stall_end_34_100",
+    3
+   ],
+   [
+    "stall_end_35_100",
+    3
+   ],
+   [
+    "stall_end_36_100",
+    3
+   ],
+   [
+    "stall_end_37_100",
+    3
+   ],
+   [
+    "stall_end_38_100",
+    3
+   ],
+   [
+    "stall_end_39_100",
+    3
+   ],
+   [
+    "stall_end_40_100",
+    3
+   ],
+   [
+    "stall_end_stream_1_100",
+    3
+   ],
+   [
+    "stall_end_stream_2_100",
+    3
+   ],
+   [
+    "stall_end_stream_3_100",
+    3
+   ],
+   [
+    "stall_end_stream_4_100",
+    3
+   ],
+   [
+    "stall_end_stream_5_100",
+    3
+   ],
+   [
+    "stall_end_stream_6_100",
+    3
+   ],
+   [
+    "stall_end_stream_7_100",
+    3
+   ],
+   [
+    "stall_end_stream_8_100",
+    3
+   ],
+   [
+    "stall_end_stream_9_100",
+    3
+   ],
+   [
+    "stall_end_stream_10_100",
+    3
+   ],
+   [
+    "stall_end_stream_11_100",
+    3
+   ],
+   [
+    "stall_end_stream_12_100",
+    3
+   ],
+   [
+    "stall_end_stream_13_100",
+    3
+   ],
+   [
+    "stall_end_stream_14_100",
+    3
+   ],
+   [
+    "stall_end_stream_15_100",
+    3
+   ],
+   [
+    "stall_end_stream_16_100",
+    3
+   ],
+   [
+    "stall_end_stream_17_100",
+    3
+   ],
+   [
+    "stall_end_stream_18_100",
+    3
+   ],
+   [
+    "stall_end_stream_19_100",
+    3
+   ],
+   [
+    "stall_end_stream_20_100",
+    3
+   ],
+   [
+    "stall_end_stream_21_100",
+    3
+   ],
+   [
+    "stall_end_stream_22_100",
+    3
+   ],
+   [
+    "stall_end_stream_23_100",
+    3
+   ],
+   [
+    "stall_end_stream_24_100",
+    3
+   ],
+   [
+    "stall_end_stream_25_100",
+    3
+   ],
+   [
+    "stall_end_stream_26_100",
+    3
+   ],
+   [
+    "stall_end_stream_27_100",
+    3
+   ],
+   [
+    "stall_end_stream_28_100",
+    3
+   ],
+   [
+    "stall_end_stream_29_100",
+    3
+   ],
+   [
+    "stall_end_stream_30_100",
+    3
+   ],
+   [
+    "stall_end_stream_31_100",
+    3
+   ],
+   [
+    "stall_end_stream_32_100",
+    3
+   ],
+   [
+    "stall_end_stream_33_100",
+    3
+   ],
+   [
+    "stall_end_stream_34_100",
+    3
+   ],
+   [
+    "stall_end_stream_35_100",
+    3
+   ],
+   [
+    "stall_end_stream_36_100",
+    3
+   ],
+   [
+    "stall_end_stream_37_100",
+    3
+   ],
+   [
+    "stall_end_stream_38_100",
+    3
+   ],
+   [
+    "stall_end_stream_39_100",
+    3
+   ],
+   [
+    "stall_end_stream_40_100",
+    3
+   ],
+   [
+    "stall_end_idle",
+    3
+   ],
+   [
+    "stall_end_idle_1",
+    3
+   ],
+   [
+    "stall_end_idle_2",
+    3
+   ],
+   [
+    "dribble_2_1_2",
+    3
+   ],
+   [
+    "dribble_3_1",
+    3
+   ],
+   [
+    "dribble_1_3",
+    3
+   ],
+   [
+    "halt_dense",
+    3
+   ],
+   [
+    "halt_boundary",
+    3
+   ],
+   [
+    "halt_tail",
+    3
+   ],
+   [
+    "dense_stalls_1",
+    3
+   ],
+   [
+    "ideal (config)",
+    3
+   ],
+   [
+    "gap_1 (config)",
+    3
+   ],
+   [
+    "gap_2 (config)",
+    3
+   ],
+   [
+    "gap_3 (config)",
+    3
+   ],
+   [
+    "gap_5 (config)",
+    3
+   ],
+   [
+    "gap_100 (config)",
+    3
+   ],
+   [
+    "gaps_1_1_d1 (config)",
+    3
+   ],
+   [
+    "gaps_1_1_d16 (config)",
+    3
+   ],
+   [
+    "gaps_1_1_d256 (config)",
+    3
+   ],
+   [
+    "gaps_1_5 (config)",
+    3
+   ],
+   [
+    "gaps_5_1 (config)",
+    3
+   ],
+   [
+    "gaps_1_2 (config)",
+    3
+   ],
+   [
+    "gaps_2_1 (config)",
+    3
+   ],
+   [
+    "gaps_1_1_1 (config)",
+    3
+   ],
+   [
+    "gaps_1_1_1_1 (config)",
+    3
+   ],
+   [
+    "idle_1 (config)",
+    3
+   ],
+   [
+    "idle_2 (config)",
+    3
+   ],
+   [
+    "idle_5 (config)",
+    3
+   ],
+   [
+    "gaps_1_at_1 (config)",
+    3
+   ],
+   [
+    "gaps_2_1_d1 (config)",
+    3
+   ],
+   [
+    "idle_2_gap_1 (config)",
+    3
+   ],
+   [
+    "idle_2_gap_1_then_2 (config)",
+    3
+   ],
+   [
+    "idle_1_after_restart (config)",
+    3
+   ],
+   [
+    "gap_1_then_back_to_back (config)",
+    3
+   ],
+   [
+    "gap_1_then_idle_1 (config)",
+    3
+   ],
+   [
+    "stall_1 (config)",
+    3
+   ],
+   [
+    "stall_2 (config)",
+    3
+   ],
+   [
+    "stall_13 (config)",
+    3
+   ],
+   [
+    "stall_14 (config)",
+    3
+   ],
+   [
+    "stall_15 (config)",
+    3
+   ],
+   [
+    "stall_20 (config)",
+    3
+   ],
+   [
+    "stall_100 (config)",
+    3
+   ],
+   [
+    "stalls_1_5 (config)",
+    3
+   ],
+   [
+    "back_to_back (config)",
+    3
+   ],
+   [
+    "starve (config)",
+    3
+   ],
+   [
+    "halt_1 (config)",
+    3
+   ],
+   [
+    "blocked (config)",
+    3
+   ],
+   [
+    "fifo_backlog (config)",
+    3
+   ],
+   [
+    "release_3 (config)",
+    3
+   ],
+   [
+    "release_4 (config)",
+    3
+   ],
+   [
+    "release_7 (config)",
+    3
+   ],
+   [
+    "release_10 (config)",
+    3
+   ],
+   [
+    "stall_then_halt (config)",
+    3
+   ],
+   [
+    "short_stall_then_halt (config)",
+    3
+   ],
+   [
+    "stall_end_1_100 (config)",
+    3
+   ],
+   [
+    "stall_end_2_100 (config)",
+    3
+   ],
+   [
+    "stall_end_3_100 (config)",
+    3
+   ],
+   [
+    "stall_end_4_100 (config)",
+    3
+   ],
+   [
+    "stall_end_5_100 (config)",
+    3
+   ],
+   [
+    "stall_end_6_100 (config)",
+    3
+   ],
+   [
+    "stall_end_7_100 (config)",
+    3
+   ],
+   [
+    "stall_end_8_100 (config)",
+    3
+   ],
+   [
+    "stall_end_9_100 (config)",
+    3
+   ],
+   [
+    "stall_end_10_100 (config)",
+    3
+   ],
+   [
+    "stall_end_11_100 (config)",
+    3
+   ],
+   [
+    "stall_end_12_100 (config)",
+    3
+   ],
+   [
+    "stall_end_13_100 (config)",
+    3
+   ],
+   [
+    "stall_end_14_100 (config)",
+    3
+   ],
+   [
+    "stall_end_15_100 (config)",
+    3
+   ],
+   [
+    "stall_end_16_100 (config)",
+    3
+   ],
+   [
+    "stall_end_17_100 (config)",
+    3
+   ],
+   [
+    "stall_end_18_100 (config)",
+    3
+   ],
+   [
+    "stall_end_19_100 (config)",
+    3
+   ],
+   [
+    "stall_end_20_100 (config)",
+    3
+   ],
+   [
+    "stall_end_21_100 (config)",
+    3
+   ],
+   [
+    "stall_end_22_100 (config)",
+    3
+   ],
+   [
+    "stall_end_23_100 (config)",
+    3
+   ],
+   [
+    "stall_end_24_100 (config)",
+    3
+   ],
+   [
+    "stall_end_25_100 (config)",
+    3
+   ],
+   [
+    "stall_end_26_100 (config)",
+    3
+   ],
+   [
+    "stall_end_27_100 (config)",
+    3
+   ],
+   [
+    "stall_end_28_100 (config)",
+    3
+   ],
+   [
+    "stall_end_29_100 (config)",
+    3
+   ],
+   [
+    "stall_end_30_100 (config)",
+    3
+   ],
+   [
+    "stall_end_31_100 (config)",
+    3
+   ],
+   [
+    "stall_end_32_100 (config)",
+    3
+   ],
+   [
+    "stall_end_33_100 (config)",
+    3
+   ],
+   [
+    "stall_end_34_100 (config)",
+    3
+   ],
+   [
+    "stall_end_35_100 (config)",
+    3
+   ],
+   [
+    "stall_end_36_100 (config)",
+    3
+   ],
+   [
+    "stall_end_37_100 (config)",
+    3
+   ],
+   [
+    "stall_end_38_100 (config)",
+    3
+   ],
+   [
+    "stall_end_39_100 (config)",
+    3
+   ],
+   [
+    "stall_end_40_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_1_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_2_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_3_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_4_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_5_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_6_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_7_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_8_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_9_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_10_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_11_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_12_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_13_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_14_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_15_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_16_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_17_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_18_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_19_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_20_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_21_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_22_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_23_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_24_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_25_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_26_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_27_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_28_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_29_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_30_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_31_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_32_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_33_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_34_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_35_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_36_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_37_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_38_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_39_100 (config)",
+    3
+   ],
+   [
+    "stall_end_stream_40_100 (config)",
+    3
+   ],
+   [
+    "stall_end_idle (config)",
+    3
+   ],
+   [
+    "stall_end_idle_1 (config)",
+    3
+   ],
+   [
+    "stall_end_idle_2 (config)",
+    3
+   ],
+   [
+    "dribble_2_1_2 (config)",
+    3
+   ],
+   [
+    "dribble_3_1 (config)",
+    3
+   ],
+   [
+    "dribble_1_3 (config)",
+    3
+   ],
+   [
+    "halt_dense (config)",
+    3
+   ],
+   [
+    "halt_boundary (config)",
+    3
+   ],
+   [
+    "halt_tail (config)",
+    3
+   ],
+   [
+    "dense_stalls_1 (config)",
+    3
+   ]
+  ],
+  "STARVE_HALTS_OUTPUT": [
+   [
+    "starve",
+    768
+   ]
+  ],
+  "STATUS_AFTER_LAST_OUT": [
+   [
+    "ideal",
+    1
+   ],
+   [
+    "back_to_back",
+    1
+   ],
+   [
+    "back_to_back",
+    1
+   ],
+   [
+    "back_to_back",
+    1
+   ],
+   [
+    "idle_5",
+    1
+   ],
+   [
+    "idle_5",
+    1
+   ]
+  ],
+  "event_data_out_channel_halt onset (first event - first stalled clock)": [
+   [
+    "stall_15",
+    16
+   ],
+   [
+    "stall_20",
+    16
+   ],
+   [
+    "stall_100",
+    16
+   ]
+  ],
+  "input resume delay (the restart A - B + the input side's lag D - K)": [
+   [
+    "blocked",
+    5
+   ],
+   [
+    "fifo_backlog",
+    5
+   ],
+   [
+    "release_4",
+    5
+   ],
+   [
+    "release_7",
+    5
+   ],
+   [
+    "release_10",
+    5
+   ]
+  ],
+  "pipeline input delay (derived: FRAME_STARTED_DELAY - INPUT_SLACK)": [
+   [
+    "halt_1 gap at 773",
+    5
+   ],
+   [
+    "halt_dense gap at 750",
+    5
+   ],
+   [
+    "halt_boundary gap at 898",
+    5
+   ]
+  ]
+ },
+ "provenance": {
+  "extractor_version": 7,
+  "rtl_runs": {
+   "back_to_back": "503ec7f9b933cbd07df44ad5bbe51984923f3e280b12eac9b75189851f1c949a",
+   "blocked": "a26b8a1e966791269de3271fab6f8e0ad9eb2e8f5637ea9558720a929b351f56",
+   "dense_stalls_1": "e18c5d39fafe25a5d2a63450fd0a1a330b8227bee5c054898d6a7a737683e45f",
+   "dribble_1_3": "c2c6d4cab12af10be2f831ff73ce06b064571152027643240ecbdc258cbf4859",
+   "dribble_2_1_2": "32fc81c9e2f2b132e73a1042ef895c5fa8aabb10879f02beb97d0b91b7a81027",
+   "dribble_3_1": "197985f9fd53e941d4ffc6394c0bc7f890a42cac21999ebde3b55e8eb6f55b3d",
+   "fifo_backlog": "697dfb42784284bbcd845e830d5598a69aeae67e0d28ff13c062cfb86dc55ddb",
+   "gap_1": "d595647c8ee015d4bfd433bac8321b2f15d1d9a5b5ef7c6532f9db81ad77e4f2",
+   "gap_100": "2f070c55385ed9feda2ad1f3b7d6a73eb557130e444c8d12c72622120887bab6",
+   "gap_1_then_back_to_back": "8c80d7b50211f3734203bc2875eaa56db59b7d687b7e4156b2eb599f9f91cacf",
+   "gap_1_then_idle_1": "055b1ff604279a6d4eb2e881941f607c2116202002ec1c42ba014892a9aad532",
+   "gap_2": "415c2b303a599dc34839254126177ba3785e3344349d07b60021da12d87b4ecb",
+   "gap_3": "176f8adcd7fcd03f7d5236d609f137a2af412ebd787ccd4185be5e9d8b201177",
+   "gap_5": "5ab7452d6fd7ccee659ba01279c7bcf730c331b6923887209f06debc86ef0f50",
+   "gaps_1_1_1": "285a0c63d570c74dcc87e9e34d0ff3119e845586dca1adeb317ac1cf5fb8759e",
+   "gaps_1_1_1_1": "389c78fa993f024aaf5cafc1e03c0074a802c0e6780daee1e7db281b5823ea19",
+   "gaps_1_1_d1": "925b792930168cff9332c51ece84c38fea3d556df6b3d81930ab8fd5663c5b4d",
+   "gaps_1_1_d16": "f95bcbf62a73af82e7def5665c57390290c4c3f53227d1030c6928d7e6c68e74",
+   "gaps_1_1_d256": "0b50ca55df7f50f3d7ee799cac05aa9c7914c9b5da33ec2087277dd8346ef150",
+   "gaps_1_2": "5cd7f8949c4ea3db1c89ef257e86cffcee88dcf76fb9659004a7c11b40eea5ab",
+   "gaps_1_5": "ce7745599006a49e4c620fa28b0006a3f3de7a8c7713250a6eb8987a33f42a85",
+   "gaps_1_at_1": "45878670ee2a7c0e20f7d099074f42b8b22dff97edeedac08d9bd7f81eebb775",
+   "gaps_2_1": "4365b74852669713c9ff404aca521b71d060d12b00b68a20e574000a5afd546e",
+   "gaps_2_1_d1": "47fd93fc4e4ad0695d50194149a640e27c9d79ac1d198b745963418370c01a32",
+   "gaps_5_1": "57c69e7a53313b010790b1df6f08ad52f1f7ae2f3d74f1ef13e56a61359ac7b9",
+   "halt_1": "82256ea2c4ecb4acf246be0d4d50322c8aa0de4caf1a842e6064a38f33640f42",
+   "halt_boundary": "2980bef13bd1231c645c2e157b268ed29eabbc7a552e2ceafd8b5aa6535bb17f",
+   "halt_dense": "3ec4ed3bc76618ed7a67681a1a42a1bd2ecab5542215e899a0bb5a3ca46f768f",
+   "halt_tail": "fb3ee1cd3baaec5d0902fd64864609854cf79e7ec19c8d1ba2e818e583b77af5",
+   "ideal": "d4f784ceab247c2b4a741a10caf9a700450982814745a145bdecfd3f35ad8891",
+   "idle_1": "1489f48a60de1a2b437d0e17f5ffb58c29ab761d1cc6373b5bbaec9f677e9334",
+   "idle_1_after_restart": "926d348191516e07c4854893e9d1a03d935f4cca8ab93cca71f15315029198ff",
+   "idle_2": "fb8f9e17e222cbdce5b243cbe61c46f4bdae11b011d756343d752d2a9068930b",
+   "idle_2_gap_1": "9e08f653c351f8da91aad1b2f2a1c90a12f78b3ac788e73ba4adc76e0d00949d",
+   "idle_2_gap_1_then_2": "1fb6538e6be21e2cb1efd0ea8743edc617219d06fe5ac9c9af6a368543d5813f",
+   "idle_5": "ce628bc4896164456401a3a4fe98542d48be33e05bead30b9f2a8f1e81f4f203",
+   "release_10": "77adcf935f346e8b187c04919bf43648b7337d27a5225ce9a5845cd8692ca8b7",
+   "release_3": "c25444569d93a42f3ce4f232246109fd8f857312f21c3892c4de77421227a4d9",
+   "release_4": "38e3856d3d247a8ef25e25ab33fa319b90e7d7bbed7197f010ec7ff460380236",
+   "release_7": "0b630de11a07d513f4d335cba2adf0c30b412c3149cac36f3e2cb6359987564a",
+   "short_stall_then_halt": "17d1d96dc5467eb742d10ee7e648e082fc3001d6bbcfe5deb9eceba3842fb261",
+   "stall_1": "a9ce31b6db9605215143e1a794308a0c3d44ba28797aa728253791f0bd63c80c",
+   "stall_100": "93fb003cbec3ac82dde1901e09870b9d11955ecb03f1fdd5d146e5cecab8c61b",
+   "stall_13": "53e3a63ab9e08fc0ee6eed6d13749c501446de92bdd59bd14d4afe2b5c427302",
+   "stall_14": "5ae2d5fe36b1f920c2ec1eacd9872d2332297a0ecad3bc8e271c6dc67fb7e135",
+   "stall_15": "6434801ef13a4c660f3f98c697dec88598e2d0c7a2931a606d1ce0892792ec76",
+   "stall_2": "9f71e404523c9c5c6bec12140f253b7b9f63255392f848fbec1c2d3d1a438297",
+   "stall_20": "02f130a41775a8cd18e5b2b848198850568e0436e37c9b6169c8123828af904f",
+   "stall_end_10_100": "2a4043e5948f8570ddf8e5c3ab86366000d7ac0f63c9d3e1d5018020b3d96983",
+   "stall_end_11_100": "75892bfe6308a8179ff08859f2ab5a334a402678f59f52ec5304d9700a006941",
+   "stall_end_12_100": "bb7459cd7e889f66ff84d4de1a12ba167f8412948de36b03278ad5d3d0eee61e",
+   "stall_end_13_100": "eb462e78640b1de2b4fa65891a078bce96e808e1abb122b0f63efc9243f6baa0",
+   "stall_end_14_100": "1017c92cbd2a627e9fecbb1af896c347244f222af2d4df9dc7b767c090ad39a9",
+   "stall_end_15_100": "621a7ff5aed96540c6cd8d0e9cef60f5d847672c9a65ef2346c64a5ee905b378",
+   "stall_end_16_100": "24ae21e20e36aeb2244bfb018b6d0b245c1a49687272bb885ef9b9b43bb9d4aa",
+   "stall_end_17_100": "8ac3e9ce8b55facc5a9793db7f915a54d4ed2e4ee7d25b67324b8643801413fc",
+   "stall_end_18_100": "defa82ca4cd3fa8b595996aaa32d05400bd923d5c28e286357727c262f41d024",
+   "stall_end_19_100": "1b20c6ed6433414bd482aef2e5d16d49d62c47297f2ec21f04488930d6674a08",
+   "stall_end_1_100": "b9407e33dbe84f2cf36402da50b7ca42a2acbd6b337bf649c88c6146bb147662",
+   "stall_end_20_100": "133f47b49ace129308c56652025993866560da604a9c0db46255b78ec4d38592",
+   "stall_end_21_100": "756b080e687aa92b9146853ddbe1b182bb6320dd94aa6b766605d0a5ae9703f1",
+   "stall_end_22_100": "25e74bf3e345befe275aae8999a487c73dc05afa31b6d72a38d45927009c3f1d",
+   "stall_end_23_100": "a18a572f5bb29c1065da44be283a1e0d56f2ee6e761b0b38369ae5118e37dc52",
+   "stall_end_24_100": "83ceabceacbfdac51e39854955dd564285e9ade5c1a32572fac55a736867e9fd",
+   "stall_end_25_100": "c12cd0f1c0572447bed893691038004bd02fa35070274d66f8814b4f73fbad0d",
+   "stall_end_26_100": "af275c51add4021ee5d33c3ca447b5f2ff241cdd78a7f66f545150342913efce",
+   "stall_end_27_100": "87bef58d1dd67834ac7fec143ab1d087ea2dea64def8a27c2bd4e45f8ed2f317",
+   "stall_end_28_100": "5e8e9a79de326052a31a89ba257a736c174a039bc98f4cf2a5bf09c450bc974d",
+   "stall_end_29_100": "0db143eaa0f8809b4124f9efe30cf34d600340955d15a5928cd4c461d9016819",
+   "stall_end_2_100": "0714532383573f25e8f0b23d241bbdcda8628eb66e0d51dea9d37dc367ace7ba",
+   "stall_end_30_100": "82992d85416748b51c1e2d54f30ab055cda8c6d317010a45af26afd2fc452bc7",
+   "stall_end_31_100": "99cccdbb963bbcd1e77839731a904ea3c22683a8db944e2e0df2bdb32a89d517",
+   "stall_end_32_100": "95bff027444e787c13a4f222d9c07fed5171ca3516812d1ed88c5ce74d6d3cea",
+   "stall_end_33_100": "bc99611e94cba71fbcfb472eb842569b2683ddb6826b0e198e94c6b0c084400f",
+   "stall_end_34_100": "f743651798b490249b38dae3ab64d57e7f14d6d37e0b96e6a7c2e98d0eac3a56",
+   "stall_end_35_100": "7a177714be95764e29b8c593168029617a555bea9031443586fd8151da2460d9",
+   "stall_end_36_100": "10bd256b1298e8340ae31643ce5bee3dec4cd9b8a8823351f6290fd7735dd667",
+   "stall_end_37_100": "fdff15619bf7b3cddc72f13b846c0ad1ed4c93a37920d2ea2fa368e54d411a6f",
+   "stall_end_38_100": "52b6967466b03216426cb4bca5eaafb78ec461fdf3a42c77f2a0086cb2753c7d",
+   "stall_end_39_100": "21662d0340202159e256e0875ff12e1c2670cca444cd0a51e683bdc0dc9efb4a",
+   "stall_end_3_100": "9d146de56107d05b0126424c5811f677178490589bb06b14df894d194d83cea2",
+   "stall_end_40_100": "8f8502ac269c10ee220334482912b11fee11af944d8bd0059e1b6204294e1689",
+   "stall_end_4_100": "eac2bbdf5f9ef8471cdf368e1c5e80154b4530045005f57653209a40541a0f9f",
+   "stall_end_5_100": "cbcda3000b5317db8939e5c4db8428f2f1c06eb04b5052f79a11ec0aca871e91",
+   "stall_end_6_100": "66c5e033df7f753e489bb006ac1401cdab4e995f54430b0979383499a8553711",
+   "stall_end_7_100": "55240e2ceb96649ffbd9bc79d4f451bbae0a5ebd74ab5b0a050e5cc5c1c0babc",
+   "stall_end_8_100": "68b0ec1314f1ae54294e14b80e4835b8f12c4c19ed199869dba28996f703d276",
+   "stall_end_9_100": "da809b5fa2b56199d98a9168f4b2ccccf9f07c4f176526f8e4b14941f6322c13",
+   "stall_end_idle": "891267ff64e2ddabc3947b95026f8be414fc2e8def35619ace9a284eaa76d77b",
+   "stall_end_idle_1": "d9b5088a679d53846c14ca9daba3eb0eb5ea3d949f148a653c631839c512bf20",
+   "stall_end_idle_2": "0356e0a7a5cc23f6553abc5dbcaadb04e0d2cbdd1a419f4f9f3d88da0e72d81b",
+   "stall_end_stream_10_100": "5276e2adb65440b317650c7ea40f1bde0a162c6c411ee969793b2663a56f0bac",
+   "stall_end_stream_11_100": "ff68a6e25e09758e76b07f35bd3cad70a475643861ae0ccf4f7578f62ddde937",
+   "stall_end_stream_12_100": "2fa6bcbd7f8a58c884a9f00c55fe05f9fcf2cb77fd3c6f342ead59ae727bcad3",
+   "stall_end_stream_13_100": "4a5ae8e19890f1a88f00df7bfe176bf9632d5cb4abeeccf944c933412437a968",
+   "stall_end_stream_14_100": "3913e30f6878f9a5d3b99079a6b1d9c421054825f9b5c8d17aa31e517a26f77a",
+   "stall_end_stream_15_100": "c8414b1bd47fe875575391c3ca7f53965905b76ad04e041330713962caf84ddf",
+   "stall_end_stream_16_100": "a5ad3569ea282cafa7a375b79a917dde43c315ec46a307964e4b982367582b53",
+   "stall_end_stream_17_100": "2d17c63ce04af5a2563f68bae0d38160a642b67d229e529edef9b98f7d1fd9a8",
+   "stall_end_stream_18_100": "340b7539a7010daf9fc965c13fbac0a3fc101d798c2191d4b83d052bf5146031",
+   "stall_end_stream_19_100": "c8f5ab07748d00665045c881a1415b273e2da4f558cc8bcfcd0a871efff955ef",
+   "stall_end_stream_1_100": "0174c8f681946be73aa1823f30f6d94a745e2d29702c8a37d5d8b1f9c2502856",
+   "stall_end_stream_20_100": "506855e9a85c85caaa611d05243be616418aa1231dd60505711bb4a2d87482b7",
+   "stall_end_stream_21_100": "e04a3ae601244d60fa6bb519e8b4e84fd5d42b8d6c8f2cb43c051527bf6f1539",
+   "stall_end_stream_22_100": "6bcffaba833f1bc813b4f98de9c5c60a1369834468df31009b843b2ef7d490ef",
+   "stall_end_stream_23_100": "a60955d981530963134f374c9d6311e44c9d955d654ebddd4e4493b17a455af5",
+   "stall_end_stream_24_100": "7c77149191cd70f44c7f0f29d5a937975c346e806cb16c01e6502f4fadec1c12",
+   "stall_end_stream_25_100": "7dea9f69e07b4fe53635855d9f00205a3ac6e62a821324dc1604aa2e02900082",
+   "stall_end_stream_26_100": "12a37e8e4d2113b165c9170beb67f12264c649c189fc186390a06c2dd2169f8e",
+   "stall_end_stream_27_100": "7d9487ffa9fb66caab254135ab38e7e1bfe7cfae8fb18fc2b3053a62f552486d",
+   "stall_end_stream_28_100": "c0a2e2170b9016bed17ac001d0a03be877fede76585be244e14c14b96a283e29",
+   "stall_end_stream_29_100": "d4ccf41567c92829c0c1ba4134f1bf0e6df33323b86632104e7c682f8dc81a8c",
+   "stall_end_stream_2_100": "5aba112656199394c70675407e6556faebc8bfe1db120b56866772de94736118",
+   "stall_end_stream_30_100": "9bbc1acf95829ffd8d227b5a8a11aaa0f7e031751b854cd14d54a4b745e94aff",
+   "stall_end_stream_31_100": "f85cdb4f4322e7b2828a4c9536005829798bf7f58e1cfdf7c09ac9634a2b3b75",
+   "stall_end_stream_32_100": "5149549acf33482cf0e4a72f4f07174d301baa1843fa53f368b1c391da1c2d41",
+   "stall_end_stream_33_100": "5f1f3ef201b46e5bc193e05cf1d78add16c4cbe0d9a9b5bf59f285da0720a63a",
+   "stall_end_stream_34_100": "a4add57457fbc7b5d229042f346cc3d1bf6c112c5f36d3b04381c739e9c22bb4",
+   "stall_end_stream_35_100": "7e2ff0fb971d2447ea2d08e8f395bfe081a5a49183c039662c6b77f4a6ae205a",
+   "stall_end_stream_36_100": "f49593a088144003859801c0c17d112ac218e578f38d28bf77f2f7f51bf03ab5",
+   "stall_end_stream_37_100": "f6e9b37a48e2825012c3bea33c46e0434121ada0501107a0e115fc845cb99080",
+   "stall_end_stream_38_100": "c9d93412009680741e41542553de23f48efa6551122f095255db341bfbb6380a",
+   "stall_end_stream_39_100": "fe29fe92204107fd4db584f6778e57d5e233a2f01e820aa48607b739e7549e9a",
+   "stall_end_stream_3_100": "be119c5b5b10ba98384f65b4f9c3e9701d9bbb4bac211260b1595ad3dd9f58aa",
+   "stall_end_stream_40_100": "0bed45c199c4117846c5c7d88d1f1341dccab7559c7836f0bfeb1ed0392800c2",
+   "stall_end_stream_4_100": "c4973ec215a311b6138d27e47e65e7193157e8d93411419cf2635d82a647845a",
+   "stall_end_stream_5_100": "7a3bc348bb03b3888c6d7c2929eb1fb6926d236bc2ddb6d3eb8bf88b74b84e7c",
+   "stall_end_stream_6_100": "d8f5939fd22189f4acec2bc9e1b2c05f2946a1a7827bceeac76acb5bf0799aa5",
+   "stall_end_stream_7_100": "cba10c5c22e6eca5610ffc1858c893282d83bbed8dfa513864b80f54644bf0f2",
+   "stall_end_stream_8_100": "01dc635f3237bf3c536ad1ad6c1a0fa204661d034d33ee36f1798a5172acf4fe",
+   "stall_end_stream_9_100": "c1d3b86fa8a1f1cf7d7480becae1529db49ddf8412e383793ef462652fb2bb37",
+   "stall_then_halt": "472bc4ab38dcf3e9d26b6c257370666802e70396e230abb011e156e644f08999",
+   "stalls_1_5": "f4debe7f2f70bab2547a2f3d4ea1e559752b0a28d3a363abce856a24cdf033a5",
+   "starve": "bec65c21a764c3684022bfd284a9d6e83c7829f3572c8af325b57d74fb11aa53"
+  }
+ },
+ "relations": {
+  "D - PIPELINE_LOOKAHEAD = OUTPUT_QUEUE_SIZE - OUTPUT_HALT_EVENT_AFTER (the input side's lag)": [
+   2,
+   2
+  ],
+  "INPUT_RESUME = D - 1": [
+   4,
+   4
+  ],
+  "OUTPUT_QUEUE_SIZE = 2 OUTPUT_HALT_EVENT_AFTER - OUTPUT_BUFFER - 1": [
+   16,
+   16
+  ],
+  "OUTPUT_QUEUE_SIZE = OUTPUT_HALT_EVENT_AFTER + 2": [
+   16,
+   16
+  ],
+  "OUTPUT_QUEUE_SIZE = OUTPUT_HALT_EVENT_AFTER + PIPELINE_LOOKAHEAD - 1 (Q = A + K - 1)": [
+   16,
+   16
+  ],
+  "PIPELINE_LOOKAHEAD = D - 2": [
+   3,
+   3
+  ],
+  "PIPELINE_LOOKAHEAD = INPUT_RESUME - 1": [
+   3,
+   3
+  ],
+  "PIPELINE_LOOKAHEAD = OUTPUT_HALT_EVENT_AFTER - OUTPUT_BUFFER (K = A - B)": [
+   3,
+   3
+  ]
+ },
+ "tag": "n256_d16_t16_conv_xc7a35tcpg236-1_100mhz"
+}

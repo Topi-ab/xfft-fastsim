@@ -1,0 +1,9 @@
+# Python packages of the tests and scripts, exact versions. Install into a venv:
+#   python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+cocotb==2.1.0
+cocotb-vivado==0.1.1
+pytest==8.4.2
+numpy==2.5.3
+# Result cache: S3 store (boto3) and its unit tests (moto)
+boto3==1.43.126
+moto==5.2.5

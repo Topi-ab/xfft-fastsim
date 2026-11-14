@@ -1,0 +1,23 @@
+{
+ "n256_d16_t16_conv_xc7a35tcpg236-1_100mhz": {
+  "mix_block_frame_end": {
+   "input handshakes": "also before the input-gap rule: an output block released at a frame end, input refused 2 clocks early",
+   "output handshakes": "also before the input-gap rule: an output block released at a frame end, input refused 2 clocks early",
+   "status clocks": "also before the input-gap rule: an output block released at a frame end, input refused 2 clocks early"
+  },
+  "mix_blocked_odd_release_gappy": {
+   "input handshakes": "also before the input-gap rule: an output block released at a frame end, input refused 2 clocks early",
+   "status clocks": "also before the input-gap rule: an output block released at a frame end, input refused 2 clocks early"
+  }
+ },
+ "n1024_d16_t16_conv_xc7a35tcpg236-1_100mhz": {
+  "mix_blocked_first_dribble_gaps": {
+   "input handshakes": "input gaps while the output is blocked part of the time: within 3 clocks (without the input-gap rule the stand-in was thousands of clocks off)",
+   "output handshakes": "input gaps while the output is blocked part of the time: within 3 clocks (without the input-gap rule the stand-in was thousands of clocks off)",
+   "status clocks": "input gaps while the output is blocked part of the time: within 3 clocks (without the input-gap rule the stand-in was thousands of clocks off)"
+  },
+  "mix_blocked_gappy_fill": {
+   "input handshakes": "input gaps while the output is blocked part of the time: within 3 clocks (without the input-gap rule the stand-in was thousands of clocks off)"
+  }
+ }
+}
