@@ -26,13 +26,22 @@
 //                 +STALLLEN<i>); positions count over all frames (frame f, sample k: f * N + k). Stops after
 //                 the last tlast: for exploring a core
 // Output: one line "XFFT_TIMING_RESULT <case> key=value ..." (the keys are explained in xfft_timing_bench.py).
+// The configuration's names (scripts/build_engine.py): its package `XFFT_MODEL_PKG and the C name of the engine
+// library's clock `XFFT_ENGINE_WALLCLOCK (xfft_model_pkg and xfft_engine_wallclock for module xfft_core).
 `ifndef XFFT_CORE_NAME
 `define XFFT_CORE_NAME xfft_core
 `endif
+`ifndef XFFT_MODEL_PKG
+`define XFFT_MODEL_PKG xfft_model_pkg
+`endif
+`ifndef XFFT_ENGINE_WALLCLOCK
+`define XFFT_ENGINE_WALLCLOCK xfft_engine_wallclock
+`endif
 `timescale 1ps / 1ps
 module tb_xfft_timing;
-    import xfft_model_pkg::*;
-    import "DPI-C" function real xfft_engine_wallclock();     // libxfft_engine.so, linked for every model
+    import `XFFT_MODEL_PKG::*;
+    // The engine's library, linked for every model
+    import "DPI-C" `XFFT_ENGINE_WALLCLOCK = function real xfft_engine_wallclock();
 
     localparam int N = XFFT_N;
     localparam int W = XFFT_INPUT_WIDTH;

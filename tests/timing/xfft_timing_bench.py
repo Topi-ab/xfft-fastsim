@@ -150,18 +150,22 @@ def build(cfg: xfft_config.XfftConfig, model: str) -> Path:
     elab = root / model
     elab.mkdir(parents=True, exist_ok=True)
     build_engine.build(dpi)
-    pkg = dpi / "xfft_model_pkg.sv"         # its first line names the library's digest
+    pkg = dpi / f"{cfg.model_package}.sv"   # its first line names the library's digest
     if model != "rtl" and "XFFT_HAS_TIMING = 0" in pkg.read_text():
         xfft_timing.constants(cfg)          # raises with the instructions
     tb = HERE / "tb_xfft_timing.sv"
     builder = cfg.write_builder_tcl()
-    model_sv = REPO / "model" / "xfft_engine.sv"
+    # The SV wrapper with the configuration's names: model/xfft_engine.sv, or its copy for another module
+    model_sv = dpi / f"{cfg.module}.sv"
+    if cfg.module == xfft_config.DEFAULT_MODULE:
+        model_sv = REPO / "model" / "xfft_engine.sv"
     stamp = elab / "inputs.sha256"
     digest = sha256([pkg, tb, Path(__file__), *([model_sv] if model != "rtl" else [builder])], model)
     if stamp.exists() and stamp.read_text() == digest and (elab / "xsim.dir" / SNAPSHOT / "xsimk").exists():
         return elab
     stamp.unlink(missing_ok=True)
-    defines = ["-d", f"XFFT_CORE_NAME={cfg.module}"]
+    defines = ["-d", f"XFFT_CORE_NAME={cfg.module}", "-d", f"XFFT_MODEL_PKG={cfg.model_package}",
+               "-d", f"XFFT_ENGINE_WALLCLOCK={cfg.engine_prefix}_wallclock"]
     libs, tops = [], []
     if model == "rtl":
         from cocotb_vivado.vivado import VivadoIp
@@ -179,7 +183,7 @@ def build(cfg: xfft_config.XfftConfig, model: str) -> Path:
     tool(["xvlog", "-sv", "-work", LIBRARY, *defines, *sv], elab, "xvlog.log")
     # -sv_root other than the elaboration directory: the snapshot links the library by its absolute path, so it
     # runs from any directory (with the elaboration directory as -sv_root it would link ./libxfft_engine.so)
-    dpi_libs = ["-sv_root", dpi, "-sv_lib", "libxfft_engine"]
+    dpi_libs = ["-sv_root", dpi, "-sv_lib", f"lib{cfg.engine_prefix}"]
     tool(["xelab", *[a for lib in libs for a in ("-L", lib)], "-L", LIBRARY, *dpi_libs, "-timescale", "1ps/1ps",
           "-snapshot", SNAPSHOT, f"{LIBRARY}.tb_xfft_timing", *tops], elab, "xelab.log")
     stamp.write_text(digest)

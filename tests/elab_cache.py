@@ -19,8 +19,9 @@ directory, checked by loading the snapshot as cocotb-vivado will (load_error()),
 
 Portability (docs/CACHE.md, "Snapshot portability"): xelab links the DPI library into the snapshot by the path
 -sv_root gives it. The layout this cache relies on keeps the DPI directory inside the elaboration directory
-(<build dir>/dpi), so xelab writes ./dpi/libxfft_engine.so, which resolves against the test directory, and
-scripts/build_engine.py links the library with the rpath $ORIGIN/cmodel. A snapshot also has the Vivado
+(<build dir>/dpi), so xelab writes ./dpi/libxfft_engine.so (./dpi/<prefix>/lib<prefix>.so for each of several
+stand-ins), which resolves against the test directory, and scripts/build_engine.py links the library with the
+rpath $ORIGIN/cmodel. A snapshot also has the Vivado
 installation path in its rpath; that path is in the key. Before an entry is stored, the dynamic sections of its
 shared libraries are read (link_problem()): an absolute DPI library path, or the build directory's path in any
 DT_NEEDED, DT_RPATH or DT_RUNPATH, and the entry is not stored (it would load another checkout's library).

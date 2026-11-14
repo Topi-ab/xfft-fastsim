@@ -5,8 +5,11 @@
 //
 // The core's ports and port kinds, widths from the generated package xfft_model_pkg. The module has the core's
 // name (`XFFT_ENGINE_NAME, default `XFFT_CORE_NAME, default xfft_core): next to the real core it needs another
-// name, xvlog -d XFFT_ENGINE_NAME=<name>. The library is libxfft_engine.so of scripts/build_engine.py, built for
-// the same configuration (xfft_engine_new checks it).
+// name, xvlog -d XFFT_ENGINE_NAME=<name>. The macros are only read, never defined here, so they do not reach the
+// files compiled after this one. The library is libxfft_engine.so of scripts/build_engine.py, built for the same
+// configuration (xfft_engine_new checks it). This file is for module xfft_core (the C functions xfft_engine_*);
+// for any other module scripts/build_engine.py writes a copy of it with that module's names (its package
+// <module>_pkg, the C functions <module>_engine_*), and several configurations can share one simulation.
 //
 // The engine steps on `posedge aclk`; both tready and event_status_channel_halt are 0 before the first edge, the
 // other outputs unknown; from the first edge on every output is known. Input bits that are not 0 or 1 are passed
@@ -14,14 +17,13 @@
 // config words are 0. A C-model failure ends the simulation ($fatal), at time 0 already if xfft_engine_new fails.
 // On Verilator (2-state) the outputs are 0 instead of unknown before the first edge and every input bit is 0 or 1;
 // single-threaded only (the engine's table has no lock: no --threads).
-`ifndef XFFT_CORE_NAME
-`define XFFT_CORE_NAME xfft_core
-`endif
-`ifndef XFFT_ENGINE_NAME
-`define XFFT_ENGINE_NAME `XFFT_CORE_NAME
-`endif
-
+`ifdef XFFT_ENGINE_NAME
 module `XFFT_ENGINE_NAME
+`elsif XFFT_CORE_NAME
+module `XFFT_CORE_NAME
+`else
+module xfft_core
+`endif
     import xfft_model_pkg::*;
 (
     input wire aclk,
@@ -72,13 +74,13 @@ module `XFFT_ENGINE_NAME
     localparam int XE_ERR_CMODEL = 1;
     localparam int XE_ERR_SLOTS = 2;
 
-    import "DPI-C" function int xfft_engine_new(int nfft, int input_width, int twiddle_width, int convergent,
-                                                int config_width, int data_width, int user_width);
-    import "DPI-C" function void xfft_engine_step(int id, int aresetn, int config_tvalid, int config_tdata,
-                                                  int data_tvalid, int d0, int d1, int d2, int d3, int d4,
-                                                  int data_tlast, int m_data_tready, int m_status_tready,
-                                                  output int out[XE_OUT_COUNT]);
-    import "DPI-C" function void xfft_engine_free(int id);
+    // The C functions of xfft_engine.h, by their C names (the configuration's prefix)
+    import "DPI-C" xfft_engine_new = function int xfft_engine_new(int nfft, int input_width, int twiddle_width,
+        int convergent, int config_width, int data_width, int user_width);
+    import "DPI-C" xfft_engine_step = function void xfft_engine_step(int id, int aresetn, int config_tvalid,
+        int config_tdata, int data_tvalid, int d0, int d1, int d2, int d3, int d4, int data_tlast,
+        int m_data_tready, int m_status_tready, output int out[XE_OUT_COUNT]);
+    import "DPI-C" xfft_engine_free = function void xfft_engine_free(int id);
 
     if (XFFT_DATA_WIDTH > 16 * XE_CHUNKS)
         $error("%m: DATA_WIDTH %0d is wider than the engine's data chunks", XFFT_DATA_WIDTH);

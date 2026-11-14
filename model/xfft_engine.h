@@ -7,15 +7,31 @@
 // types only: every argument is a 32-bit int, so the same functions serve SV `int` (DPI-C) and VHDL `integer`
 // (VHPIDIRECT). The timing constants and widths are compiled in from the generated xfft_model.h
 // (model/xfft_timing.py), so there is one library per configuration (scripts/build_engine.py). The library
-// exports only the xfft_engine_* symbols below (-fvisibility=hidden, -Wl,-Bsymbolic): it shares the process
-// with the simulator, cocotb and Python. One simulation thread only:
-// the table of engines has no lock (nor, as far as is known, AMD's C model).
+// exports only the four functions below, under the configuration's prefix (XFFT_ENGINE_PREFIX: -fvisibility=hidden,
+// -Wl,-Bsymbolic): it shares the process with the simulator, cocotb, Python and the libraries of other
+// configurations. One simulation thread only: the table of engines has no lock (nor, as far as is known, AMD's C
+// model).
 #ifndef XFFT_ENGINE_H
 #define XFFT_ENGINE_H
 
 #include <stdint.h>
 
 #define XFFT_ENGINE_API __attribute__((visibility("default")))
+
+// The exported names carry the configuration's prefix XFFT_ENGINE_PREFIX: <prefix>_new, <prefix>_step,
+// <prefix>_free, <prefix>_wallclock. scripts/build_engine.py sets it (-DXFFT_ENGINE_PREFIX=...) to xfft_engine for
+// module xfft_core and to <module>_engine for any other module, so that the libraries of different
+// configurations export different symbols and can share one simulation. The C sources keep writing
+// xfft_engine_new and so on: the macros below turn those names into the prefixed ones.
+#ifndef XFFT_ENGINE_PREFIX
+#define XFFT_ENGINE_PREFIX xfft_engine
+#endif
+#define XE_JOIN_(prefix, name) prefix##_##name
+#define XE_JOIN(prefix, name) XE_JOIN_(prefix, name)
+#define xfft_engine_new XE_JOIN(XFFT_ENGINE_PREFIX, new)
+#define xfft_engine_step XE_JOIN(XFFT_ENGINE_PREFIX, step)
+#define xfft_engine_free XE_JOIN(XFFT_ENGINE_PREFIX, free)
+#define xfft_engine_wallclock XE_JOIN(XFFT_ENGINE_PREFIX, wallclock)
 
 // Single-bit inputs: 0, 1, or XE_UNKNOWN for any other value (X, Z, U, W, -). The engine evaluates them as
 // SystemVerilog's `&&` and `!` do: `a && b` is true only for a known 1 and a known 1, `!a` only for a known 0. So an
@@ -59,7 +75,7 @@ enum {
 };
 
 // A new engine for one core instance; returns its id (>= 0), or -1 (message on stderr). The arguments are the
-// configuration as the HDL package xfft_model_pkg has it; they must equal the xfft_model.h the library was built
+// configuration as the generated HDL package has it; they must equal the xfft_model.h the library was built
 // with. Also checks that the timing constants fit the model.
 XFFT_ENGINE_API int32_t xfft_engine_new(int32_t nfft, int32_t input_width, int32_t twiddle_width,
                                         int32_t convergent, int32_t config_width, int32_t data_width,

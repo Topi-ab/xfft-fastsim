@@ -18,6 +18,7 @@ from __future__ import annotations
 import dataclasses
 import hashlib
 import os
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -27,6 +28,10 @@ BUILD = REPO / "build"
 
 ROUNDINGS = ("convergent", "truncation")
 SCALINGS = ("scaled",)
+DEFAULT_MODULE = "xfft_core"
+# Modules whose package, C prefix or wrapper file would be those of the default module (xfft_model_pkg,
+# xfft_engine, model/xfft_engine.sv/.vhdl); refused in any case, as VHDL names do not depend on case
+RESERVED_MODULES = ("xfft", "xfft_model", "xfft_engine")
 
 
 def pad8(bits: int) -> int:
@@ -43,7 +48,7 @@ class XfftConfig:
     rounding: str = "convergent"    # convergent | truncation
     part: str = "xc7a35tcpg236-1"
     clock_mhz: int = 100            # target clock of the IP: may change its pipeline, so its latency
-    module: str = "xfft_core"       # module name of the generated core, and of the stand-in
+    module: str = DEFAULT_MODULE    # module name of the generated core, and of the stand-in
 
     def __post_init__(self) -> None:
         if not 3 <= self.nfft <= 16:
@@ -54,6 +59,12 @@ class XfftConfig:
             raise ValueError(f"scaling={self.scaling}: the stand-in supports {', '.join(SCALINGS)} only")
         if self.rounding not in ROUNDINGS:
             raise ValueError(f"rounding={self.rounding}: one of {', '.join(ROUNDINGS)}")
+        if not re.fullmatch(r"[A-Za-z](_?[A-Za-z0-9])*", self.module):
+            raise ValueError(f"module={self.module}: a VHDL basic identifier, also valid in SV and C (a letter, then "
+                             f"letters and digits, single underscores between them)")
+        if self.module != DEFAULT_MODULE and self.module.lower() in (*RESERVED_MODULES, DEFAULT_MODULE):
+            raise ValueError(f"module={self.module}: its names would be those of module {DEFAULT_MODULE} (VHDL "
+                             f"names do not depend on case)")
 
     # ---- Derived numbers (PG109, pipelined streaming I/O, fixed scaling) ----
 
@@ -110,6 +121,19 @@ class XfftConfig:
         default = XfftConfig()
         return ",".join(f"{f.name}={getattr(self, f.name)}" for f in dataclasses.fields(self)
                         if getattr(self, f.name) != getattr(default, f.name))
+
+    @property
+    def engine_prefix(self) -> str:
+        """Prefix of the C functions the stand-in's library exports (<prefix>_new, _step, _free, _wallclock) and
+        the library's name (lib<prefix>.so): xfft_engine for module xfft_core, else <module>_engine. So the
+        libraries of different configurations can share one simulation."""
+        return "xfft_engine" if self.module == DEFAULT_MODULE else f"{self.module}_engine"
+
+    @property
+    def model_package(self) -> str:
+        """Name of the generated HDL package (SV and VHDL) of the stand-in's widths and constants, and of its
+        files: xfft_model_pkg for module xfft_core, else <module>_pkg."""
+        return "xfft_model_pkg" if self.module == DEFAULT_MODULE else f"{self.module}_pkg"
 
     @property
     def build_dir(self) -> Path:

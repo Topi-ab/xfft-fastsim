@@ -1,11 +1,13 @@
 """The C engine's single source of constants and its build glue: the SV package, VHDL package and C header that
-model/xfft_timing.py writes hold the same values; the SV package's text is unchanged; the VHDL wrapper is renamed
-for another module; the models and the test parameters per simulator. With gcc, the engine itself
+model/xfft_timing.py writes hold the same values; the SV package's text is unchanged; the names per module (the
+packages, the renamed SV and VHDL wrappers, the library's symbols); the models, several of them in one simulation,
+and the test parameters per simulator. With gcc, the engine itself
 (model/xfft_engine.c with a stand-in for the C model, through ctypes): its latencies are the timing constants. No
 Vivado, no simulator.
 """
 
 import ctypes
+import os
 import re
 import shutil
 import subprocess
@@ -62,12 +64,84 @@ def test_sv_package_text_is_unchanged():
     assert len(lines) == 3 + 11 + len(xfft_timing.NAMES)
 
 
+def test_names_per_module():
+    """Module xfft_core keeps the names of 0.1.0; any other module has its own package and C prefix; modules whose
+    names would be the default's are refused."""
+    default, other = xfft_config.XfftConfig(), xfft_config.parse("module=my_fft")
+    assert (default.model_package, default.engine_prefix) == ("xfft_model_pkg", "xfft_engine")
+    assert (other.model_package, other.engine_prefix) == ("my_fft_pkg", "my_fft_engine")
+    assert "package my_fft_pkg;" in xfft_timing.sv_package(other, None)
+    assert "package my_fft_pkg is" in xfft_timing.vhdl_package(other, None)
+    for bad in ("xfft", "xfft_model", "xfft_engine", "XFFT_MODEL", "Xfft_Core", "1fft", "my-fft", "fft_", "a__b"):
+        with pytest.raises(ValueError, match="module="):
+            xfft_config.parse(f"module={bad}")
+    assert xfft_config.parse("module=My_Fft2").module == "My_Fft2"
+
+
+def test_constants_do_not_depend_on_module(monkeypatch):
+    """A module other than xfft_core with no constants under its own tag takes those of the same configuration
+    with module xfft_core: from TABLE (the default 1024 points) and from timing/ (the configurations there)."""
+    monkeypatch.delenv("XFFT_TIMING_JSON", raising=False)
+    default = xfft_config.XfftConfig()
+    other = xfft_config.parse("module=my_fft")
+    assert other.tag != default.tag and default.tag in xfft_timing.TABLE
+    assert xfft_timing.table_tag(other) == default.tag and xfft_timing.source_file(other) is None
+    assert xfft_timing.constants(other) == xfft_timing.constants(default)
+    b = xfft_config.parse("nfft=9,input_width=18,twiddle_width=18,rounding=truncation,clock_mhz=250,module=my_fft")
+    b_default = xfft_config.parse("nfft=9,input_width=18,twiddle_width=18,rounding=truncation,clock_mhz=250")
+    assert xfft_timing.table_tag(b) is None and xfft_timing.source_file(b) == xfft_timing.timing_file(b_default)
+    assert xfft_timing.constants(b) == xfft_timing.constants(b_default)
+
+
 def test_vhdl_wrapper_renamed():
     import build_engine
 
     text = build_engine.vhdl_wrapper(xfft_config.parse("module=my_fft"))
     assert "entity my_fft is" in text and "architecture c_engine of my_fft is" in text
     assert "entity xfft_core is" not in text
+    code = "\n".join(line.split("--")[0] for line in text.splitlines())
+    assert "use work.my_fft_pkg.all;" in text and "xfft_model_pkg" not in code
+    assert '"VHPIDIRECT my_fft_engine_new"' in text and '"VHPIDIRECT my_fft_engine_step"' in text
+    assert "VHPIDIRECT xfft_engine" not in text and "libmy_fft_engine.so" in text
+    assert 'report "my_fft: my_fft_engine_new failed"' in text and 'report "xfft_core: ' not in text
+
+
+def test_sv_wrapper_renamed():
+    """The SV copy for another module: its module (still `XFFT_ENGINE_NAME when defined), its package, the C names
+    of its DPI-C imports; the SV names of the imports and the rest of the file stay."""
+    import build_engine
+
+    text = build_engine.sv_wrapper(xfft_config.parse("module=my_fft"))
+    code = "\n".join(line.split("//")[0] for line in text.splitlines())
+    assert "`else\nmodule my_fft\n`endif\n    import my_fft_pkg::*;" in code and "XFFT_CORE_NAME" not in code
+    for f in ("new", "step", "free"):
+        assert f'import "DPI-C" my_fft_engine_{f} = function' in text and f" xfft_engine_{f}(" in text
+    assert '"DPI-C" xfft_engine' not in code and "xfft_model_pkg" not in code
+    original = (REPO / "model" / "xfft_engine.sv").read_text()
+    assert "`define" not in original.split("module")[0].split("`ifdef")[-1]     # no macro leaks out of it
+
+
+def test_library_symbols_per_module(tmp_path):
+    """build_engine.py --timing-only for another module: lib<module>_engine.so exports <module>_engine_new, _step,
+    _free and _wallclock, and none of the default names (so it can share a process with the default's library);
+    the constants of the same configuration with module xfft_core (timing/), as none are under its own tag."""
+    if shutil.which("gcc") is None:
+        pytest.skip("gcc not on PATH")
+    out = tmp_path / "dpi"
+    env = {**os.environ, "XFFT_CONFIG": "nfft=8,module=my_fft", "XFFT_TIMING_JSON": ""}
+    subprocess.run([sys.executable, str(REPO / "scripts" / "build_engine.py"), "--timing-only", str(out)], env=env,
+                   check=True)
+    assert {p.name for p in out.iterdir()} >= {"libmy_fft_engine.so", "my_fft_pkg.sv", "my_fft_pkg.vhdl",
+                                               "my_fft.sv", "my_fft.vhdl", "xfft_model.h"}
+    so = ctypes.CDLL(str(out / "libmy_fft_engine.so"))
+    for f in ("new", "step", "free", "wallclock"):
+        assert hasattr(so, f"my_fft_engine_{f}")
+        with pytest.raises(AttributeError):
+            getattr(so, f"xfft_engine_{f}")
+    cfg = xfft_config.parse("nfft=8,module=my_fft")
+    assert "#define XFFT_LATENCY_FIRST_OUT 627" in (out / "xfft_model.h").read_text()
+    assert so.my_fft_engine_new(cfg.nfft, cfg.input_width, cfg.twiddle_width, 1, cfg.config_width, cfg.data_width,
+                                cfg.user_width) >= 0
 
 
 def test_simulator_parameters(monkeypatch, tmp_path):
@@ -145,6 +219,46 @@ def test_dpi_model_vhdl_side(tmp_path, monkeypatch):
         plain.prepare_vhdl(out, "nvc")
     with pytest.raises(ValueError):
         model.prepare_verilator(out)            # no SV sources
+
+
+def test_dpi_models_share_a_simulation(tmp_path, monkeypatch):
+    """Several stand-ins in one run: each model once, two different ones of one name refused; NVC preloads every
+    library; a model's build gets its own environment, which its cache entry holds (a file by its contents)."""
+    import hdl_sources
+    import sim_runner
+
+    build = tmp_path / "build.py"
+    build.write_text("import os, sys, pathlib\nout = pathlib.Path(sys.argv[1]); out.mkdir(parents=True, "
+                     "exist_ok=True)\n(out / 'cfg.txt').write_text(os.environ['XFFT_CONFIG'])\n")
+    a = sim_runner.DpiModel(name="a", build=build, sources=(), inputs=(), env=(("XFFT_CONFIG", "nfft=8"),))
+    b = sim_runner.DpiModel(name="b", build=build, sources=(), inputs=(), env=(("XFFT_CONFIG", "nfft=9"),))
+    assert sim_runner.distinct_models([a, "x.sv", a, b]) == [a, "x.sv", b]
+    with pytest.raises(ValueError, match="different stand-in models named a"):
+        sim_runner.distinct_models([a, sim_runner.DpiModel(name="a", build=build, sources=(), inputs=())])
+    monkeypatch.setenv("XFFT_CONFIG", "nfft=12")
+    a.built(tmp_path / "out_a", ())
+    assert (tmp_path / "out_a" / "cfg.txt").read_text() == "nfft=8"
+    env = sim_runner.merged_env({"X": "1", "LD_PRELOAD": "/a.so:/pre.so"}, {"LD_PRELOAD": "/b.so:/pre.so"})
+    assert env == {"X": "1", "LD_PRELOAD": "/b.so:/pre.so:/a.so"}
+    assert sim_runner.merged_env({}, {"LD_PRELOAD": "/b.so"}) == {"LD_PRELOAD": "/b.so"}
+    constants = tmp_path / "c.json"
+    constants.write_text("{}")
+    entry = sim_runner.DpiModel(name="a", build=build, sources=(), inputs=(),
+                                env=(("XFFT_CONFIG", "nfft=8"), ("XFFT_TIMING_JSON", str(constants)))).cache_entry(
+        lambda p: {"path": str(p), "sha256": "h"})
+    assert entry["env"] == {"XFFT_CONFIG": "nfft=8", "XFFT_TIMING_JSON": {"path": str(constants), "sha256": "h"}}
+    # The xfft stand-in: built for its own configuration, named after its module
+    monkeypatch.delenv("XFFT_TIMING_JSON", raising=False)
+    cfg = xfft_config.parse("nfft=8,module=my_fft")
+    model = hdl_sources.xfft_engine(cfg, timing_only=True, constants=constants)
+    assert model.name == "my_fft_engine" and dict(model.env) == {"XFFT_CONFIG": cfg.spec,
+                                                                "XFFT_TIMING_JSON": str(constants.resolve())}
+    assert model.sources == ("my_fft_pkg.sv", "my_fft.sv") and model.vhdl_sources == ("my_fft_pkg.vhdl",
+                                                                                       "my_fft.vhdl")
+    assert constants.resolve() in model.inputs
+    default = hdl_sources.xfft_engine(xfft_config.XfftConfig(), timing_only=True)
+    assert default.name == "xfft_engine" and dict(default.env)["XFFT_TIMING_JSON"] == ""
+    assert default.sources == ("xfft_model_pkg.sv", REPO / "model" / "xfft_engine.sv")
 
 
 def test_dpi_model_verilator_side(tmp_path):

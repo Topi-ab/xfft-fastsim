@@ -21,4 +21,4 @@ PASS
 3. `xelab -L xil_defaultlib -sv_root <dpi dir> -sv_lib libxfft_engine -snapshot tb_tone xil_defaultlib.tb_tone`;
 4. `xsim tb_tone -R`.
 
-The library's directory is not the elaboration directory, so the snapshot finds the library from anywhere. Everything goes to `build/examples/plain_xsim/`. `XFFT_CONFIG=... examples/plain_xsim/run.sh` runs it on another configuration with timing constants.
+The library's directory is not the elaboration directory, so the snapshot finds the library from anywhere. For a configuration whose module is not `xfft_core`, `run.sh` takes that module's names instead: the package `<module>_pkg` (`-d XFFT_MODEL_PKG=<module>_pkg`), the wrapper copy `<dpi dir>/<module>.sv` and the library `lib<module>_engine`. Everything goes to `build/examples/plain_xsim/`. `XFFT_CONFIG=... examples/plain_xsim/run.sh` runs it on another configuration with timing constants.

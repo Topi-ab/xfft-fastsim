@@ -56,7 +56,6 @@ CASES_INDEX = "cases_index.json"
 TRACES = (TRACE, TRACE_2STATE, CASES_TRACE)
 # The simulators without X and Z (no trace.txt there)
 TWO_STATE = ("verilator",)
-REFERENCE = "vivado_xfft_engine"        # the build directory of the engine on XSim
 MODEL_DIGEST = "model.sha256"
 # The fields of a trace line (xfft_chaos.trace_line()); a field of single bits lists them
 FIELDS = (("clock",), xfft_chaos.BITS, ("s_axis_config_tdata",), ("s_axis_data_tdata",), xfft_chaos.OUTPUTS[:5],
@@ -209,9 +208,11 @@ def first_difference(ref: Path, other: Path) -> str | None:
 def test_xfft_trace_compare() -> None:
     """Every other simulator's trace there is against XSim's; a trace of other traffic (an older xfft_chaos.py)
     or of an older engine is left out with a note."""
-    root = sim_runner.SIM_BUILD / xfft_config.current().tag / "xfft_trace"
-    if not (root / REFERENCE / TRACE).is_file():
-        pytest.skip(f"no reference trace in {(root / REFERENCE).relative_to(sim_runner.REPO)}: run test_xfft_trace "
+    cfg = xfft_config.current()
+    root = sim_runner.SIM_BUILD / cfg.tag / "xfft_trace"
+    reference = f"vivado_{cfg.engine_prefix}"       # the build directory of the engine on XSim
+    if not (root / reference / TRACE).is_file():
+        pytest.skip(f"no reference trace in {(root / reference).relative_to(sim_runner.REPO)}: run test_xfft_trace "
                     f"on XSim first")
     digest = model_digest()
 
@@ -219,19 +220,19 @@ def test_xfft_trace_compare() -> None:
         stamp = build_dir / MODEL_DIGEST
         return stamp.is_file() and stamp.read_text() == digest
 
-    if not current(root / REFERENCE):
-        pytest.skip(f"the reference trace in {REFERENCE} was made by another version of the engine: run "
+    if not current(root / reference):
+        pytest.skip(f"the reference trace in {reference} was made by another version of the engine: run "
                     f"test_xfft_trace on XSim again")
     failures, compared = [], 0
     for name in TRACES:
-        ref = root / REFERENCE / name
+        ref = root / reference / name
         if not ref.is_file():
             print(f"{name}: left out, the reference has no {name}: run test_xfft_trace on XSim again")
             continue
         with open(ref) as f:
             traffic = f.readline()
         lines = sum(1 for _ in open(ref)) - 1
-        for path in sorted(p for p in root.glob(f"*/{name}") if p.parent.name != REFERENCE):
+        for path in sorted(p for p in root.glob(f"*/{name}") if p.parent.name != reference):
             if not current(path.parent):
                 print(f"{path.parent.name}/{name}: left out, made by an older engine: run test_xfft_trace on it "
                       f"again")

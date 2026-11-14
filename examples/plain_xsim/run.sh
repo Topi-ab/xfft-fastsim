@@ -18,18 +18,22 @@ work="$root/build/examples/plain_xsim/xfft_engine"
 dpi="$work/dpi"            # the C engine's library and the package; not the elaboration directory
 sim="$work/sim"
 mkdir -p "$sim"
-module=$("$python" -c "import sys; sys.path.insert(0, '$root/model'); import xfft_config
-print(xfft_config.current().module)")
+# The configuration's names: module, package, C prefix (xfft_core, xfft_model_pkg, xfft_engine by default)
+read -r module pkg prefix < <("$python" -c "import sys; sys.path.insert(0, '$root/model'); import xfft_config
+c = xfft_config.current(); print(c.module, c.model_package, c.engine_prefix)")
+# The SV wrapper: model/xfft_engine.sv for module xfft_core, else its copy with the module's names
+wrapper="$root/model/xfft_engine.sv"
+[ "$module" = xfft_core ] || wrapper="$dpi/$module.sv"
 
 # 1. The stand-in's C side: generates the core with Vivado the first time (its C model), compiles the C engine
 "$python" "$root/scripts/build_engine.py" "$dpi"
 
 cd "$sim"
 # 2. Compile: the package, the stand-in under the core's name, the testbench
-xvlog -sv -work xil_defaultlib -d XFFT_CORE_NAME="$module" \
-    "$dpi/xfft_model_pkg.sv" "$root/model/xfft_engine.sv" "$here/tb_tone.sv" > xvlog.log
+xvlog -sv -work xil_defaultlib -d XFFT_CORE_NAME="$module" -d XFFT_MODEL_PKG="$pkg" \
+    "$dpi/$pkg.sv" "$wrapper" "$here/tb_tone.sv" > xvlog.log
 # 3. Elaborate with the DPI-C library (-sv_root: its directory, so the snapshot finds it from anywhere)
-xelab -L xil_defaultlib -sv_root "$dpi" -sv_lib libxfft_engine -snapshot tb_tone xil_defaultlib.tb_tone > xelab.log
+xelab -L xil_defaultlib -sv_root "$dpi" -sv_lib "lib$prefix" -snapshot tb_tone xil_defaultlib.tb_tone > xelab.log
 # 4. Run
 xsim tb_tone -R -log xsim.log > /dev/null
 grep "^tb_tone:\|^PASS\|^FAIL" xsim.log

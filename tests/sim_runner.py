@@ -4,7 +4,8 @@ only: the C engine's SV wrapper through DPI-C). Knows no DUT (the sources come f
 
 Build directories: build/sim/<build name>/<sim>[_<stand-in model>]/, so that a design with a stand-in builds
 apart from the one with the real core, and every simulator apart from the others; switching between them
-rebuilds none. A stand-in's C library is built into dpi/ in the build directory. XSim snapshots go through the
+rebuilds none. A stand-in's C library is built into dpi/ in the build directory (dpi/<model name>/ each, when
+several stand-ins share one simulation: all their libraries are loaded or linked). XSim snapshots go through the
 elaboration cache (elab_cache.py); NVC and GHDL build in well under a second, Verilator in a few seconds (its
 C++ compiles go through ccache when Verilator was built with it), and these always build afresh.
 """
@@ -95,13 +96,20 @@ class DpiModel:
     sources: the model's SystemVerilog in compile order, vhdl_sources its VHDL; a str is a file the build writes
     into <dir>, a Path a file of the repository. inputs: the files the model is made of, also generated ones such
     as the vendor's C-model archive (cache key, rebuild trigger). build_args: extra arguments of the build script
-    before <dir> (for example --timing-only)."""
+    before <dir> (for example --timing-only). env: (name, value) pairs set over the process's environment for the
+    build (for example the model's own configuration), part of the cache key; a value that names a file enters the
+    key by its contents.
+
+    Several models can share one simulation (sim_runner.run() with all of them among its sources) when their
+    names, their libraries' exported symbols and their HDL units differ: each is built into its own directory and
+    every library is loaded or linked."""
     name: str
     build: Path
     sources: tuple
     inputs: tuple
     vhdl_sources: tuple = ()
     build_args: tuple = ()
+    env: tuple = ()
 
     def cache_entry(self, file_entry) -> dict:
         """Fingerprint for sim_cache (file_entry: path -> {path, sha256})."""
@@ -114,11 +122,14 @@ class DpiModel:
             entry["vhdl_sources"] = entries(self.vhdl_sources)
         if self.build_args:
             entry["build_args"] = list(self.build_args)
+        if self.env:
+            entry["env"] = {k: file_entry(Path(v)) if v and Path(v).is_file() else v for k, v in self.env}
         return entry
 
     def built(self, out: Path, files: tuple) -> list[Path]:
-        """Build into out; files as paths."""
-        subprocess.run([sys.executable, str(self.build), *self.build_args, str(out)], check=True)
+        """Build into out (with env over the process's environment); files as paths."""
+        subprocess.run([sys.executable, str(self.build), *self.build_args, str(out)], check=True,
+                       env=os.environ | dict(self.env) if self.env else None)
         return [out / s if isinstance(s, str) else Path(s) for s in files]
 
     def prepare(self, out: Path) -> tuple[list[Path], list[str]]:
@@ -244,7 +255,7 @@ def run(*, sources: Sequence, hdl_toplevel: str, test_module: str, build_name: s
     if sim not in SIM_EXECUTABLE:
         raise ValueError(f"sim={sim}: one of {', '.join(SIM_EXECUTABLE)}")
     parameters = dict(parameters or {})
-    sources = list(sources)
+    sources = distinct_models(list(sources))
     dpi_models = [s for s in sources if isinstance(s, DpiModel)]
     waves = env_true("WAVES")
     build_dir = SIM_BUILD / build_name / "_".join([sim, *(m.name for m in dpi_models)])
@@ -313,11 +324,12 @@ def run(*, sources: Sequence, hdl_toplevel: str, test_module: str, build_name: s
         logged(runner.build, build_dir / BUILD_LOG, sources=prepare_models(runner, build_dir, sources),
                always=True, clean=False, **build_kwargs)
     else:
-        # What cocotb-vivado's build signature does not see (the models' files, the defines, the xelab arguments)
-        # forces a build when it changes
+        # What cocotb-vivado's build signature does not see (the models' files and build environments, the
+        # defines, the xelab arguments) forces a build when it changes
         expanded = prepare_models(runner, build_dir, sources)
         h = hashlib.sha256(repr((runner.elab_args, verilog_defines)).encode())
         for model in dpi_models:
+            h.update(repr(model.env).encode())
             for f in (model.build, *model.inputs):
                 h.update(Path(f).read_bytes())
         stamp = build_dir / "extra_inputs.sha256"
@@ -346,7 +358,7 @@ def build_vhdl(sim: str, build_dir: Path, sources: list, hdl_toplevel: str, hdl_
             if isinstance(src, DpiModel):
                 hdl, env, link = src.prepare_vhdl(dpi_dir(build_dir, src, len(models)), sim)
                 expanded += hdl
-                test_args["extra_env"] |= env
+                test_args["extra_env"] = merged_env(test_args["extra_env"], env)
                 link_args += link
             else:
                 expanded.append(src)
@@ -487,6 +499,33 @@ def test_and_store(runner, cached: sim_cache.CachedRun | None, build_dir: Path, 
                     overwrite=sim_cache.mode() == "refresh")
     except Exception as e:          # the cache never fails a test
         sim_cache.log(f"store failed: {e}")
+
+
+def distinct_models(sources: list) -> list:
+    """The sources with each stand-in model once (two instances of one configuration are one model); a clear error
+    for two different models of the same name, which would share their directory and their library's symbols (names
+    that differ only in case count as the same: VHDL names do not depend on case)."""
+    out, seen = [], {}
+    for src in sources:
+        if isinstance(src, DpiModel):
+            key = src.name.lower()
+            if key in seen:
+                if seen[key] != src:
+                    raise ValueError(f"two different stand-in models named {src.name}: models that share a "
+                                     f"simulation need different names (for the xfft core: different modules)")
+                continue
+            seen[key] = src
+        out.append(src)
+    return out
+
+
+def merged_env(env: dict, more: dict) -> dict:
+    """env with more over it, but LD_PRELOAD joined: the libraries of both, each once, more's first."""
+    out = env | more
+    if env.get("LD_PRELOAD") and more.get("LD_PRELOAD"):
+        libs = [p for v in (more["LD_PRELOAD"], env["LD_PRELOAD"]) for p in v.replace(" ", ":").split(":") if p]
+        out["LD_PRELOAD"] = ":".join(dict.fromkeys(libs))
+    return out
 
 
 def dpi_dir(build_dir: Path, model: DpiModel, count: int) -> Path:

@@ -30,7 +30,7 @@ export XFFT_CONFIG=nfft=12,input_width=18,twiddle_width=18,rounding=truncation,p
 | `rounding` | `convergent`, `truncation` | the core's rounding mode |
 | `part` | an installed part | the device the core is generated for |
 | `clock_mhz` | whole MHz | the IP's target clock frequency (it can change the core's pipeline, so its latency) |
-| `module` | a module name | the core's name; the stand-in compiles under the same name |
+| `module` | a module name | the core's name; the stand-in compiles under the same name, and its package, library and C functions are named after it ([several configurations in one simulation](#several-configurations-in-one-simulation)) |
 
 The configuration's tag (`python -c "import sys; sys.path.insert(0, 'model'); import xfft_config; print(xfft_config.current().tag)"`) names its build directory `build/<tag>/` and its timing constants.
 
@@ -68,9 +68,9 @@ xsim top -R
 
 Notes:
 
-- The module's name is `` `XFFT_CORE_NAME `` (default `xfft_core`). Set it to the name your design instantiates (`-d XFFT_CORE_NAME=<name>`), or set the configuration's `module` field, which also names the generated core.
+- The module's name is `` `XFFT_CORE_NAME `` (default `xfft_core`). Set it to the name your design instantiates (`-d XFFT_CORE_NAME=<name>`), or set the configuration's `module` field, which also names the generated core. With a `module` other than `xfft_core` every name follows it: compile `<dir>/<module>_pkg.sv` and the wrapper copy `<dir>/<module>.sv` (instead of `model/xfft_engine.sv`) and elaborate with `-sv_lib lib<module>_engine` ([several configurations in one simulation](#several-configurations-in-one-simulation)).
 - Keep the library's directory apart from the elaboration directory. `xelab` links the library by its absolute path when `-sv_root` names another directory, so the snapshot runs from anywhere; with the elaboration directory itself it would link `./libxfft_engine.so`. The cocotb runner instead builds it into a subdirectory `dpi/` of the elaboration directory: the snapshot then links `./dpi/libxfft_engine.so` and can be moved or copied with the directory, which the elaboration cache relies on ([CACHE.md](CACHE.md#snapshot-portability)).
-- Compile the package first: the wrapper imports `xfft_model_pkg`.
+- Compile the package first: the wrapper imports `xfft_model_pkg` (`<module>_pkg` for another module).
 - The C model's own libraries are found through the library's rpath; no `LD_LIBRARY_PATH` is needed. No `glbl` is needed for the stand-in either.
 - A VHDL design instantiates the stand-in as it would the core (component or entity instantiation of `xfft_core`): XSim binds the VHDL instance to the SystemVerilog module of that name.
 - The real core and the stand-in can be in the same simulation: compile the stand-in under another name with `-d XFFT_ENGINE_NAME=<other name>` (`tests/xfft_pair.sv` does this).
@@ -109,14 +109,52 @@ obj_dir/V<your top>
 
 Notes:
 
-- VHDL-2008 only: the C functions take 32-bit integers, and NVC's VHDL-2019 `integer` is 64 bits wide; the wrapper stops at time 0 then. When the configuration's `module` is not `xfft_core`, `build_engine.py` writes a copy of the VHDL wrapper under that entity name into `<dir>/xfft_engine.vhdl`; compile that one instead.
-- One library per configuration: `xfft_engine_new()` refuses a library built for another configuration than the package the HDL was compiled with.
-- `libxfft_engine.so` exports only the `xfft_engine_*` functions (`-fvisibility=hidden`, `-Bsymbolic`). AMD's prebuilt C model exports its own global names into the process; a testbench that loads another library with the same names (e.g. another GMP) can clash with it.
+- VHDL-2008 only: the C functions take 32-bit integers, and NVC's VHDL-2019 `integer` is 64 bits wide; the wrapper stops at time 0 then. When the configuration's `module` is not `xfft_core`, `build_engine.py` writes copies of the wrappers with that module's names into `<dir>/<module>.vhdl` and `<dir>/<module>.sv`, beside its package `<dir>/<module>_pkg.vhdl` and library `<dir>/lib<module>_engine.so`; compile and load those instead.
+- One library per configuration: `xfft_engine_new()` refuses a library built for another configuration than the package the HDL was compiled with. Configurations with different modules can share one simulation, each with its own library ([below](#several-configurations-in-one-simulation)).
+- `libxfft_engine.so` exports only its four functions `xfft_engine_*` (`-fvisibility=hidden`, `-Bsymbolic`; `<module>_engine_*` for another module). AMD's prebuilt C model exports its own global names into the process; a testbench that loads another library with the same names (e.g. another GMP) can clash with it.
 - The edge: the SV wrapper steps on `posedge aclk`, the VHDL wrapper on `rising_edge(aclk)`. They differ only on a clock that starts at 1 or passes through X: Verilog counts x to 1 as an edge, VHDL does not.
 - Unknown inputs (X, Z, and in VHDL U, W, -): an unknown `aresetn` resets nothing, an unknown `tvalid` or `tready` makes no handshake (and no stall), an unknown `s_axis_data_tlast` raises neither tlast event; unknown bits of the data and config words are 0. VHDL `H` and `L` are 1 and 0.
 - Verilator: single-threaded only. The engine keeps its table of engines (and AMD's C model its own state) in global variables without a lock, so do not build with `--threads` (cocotb's runner does not). Verilator is 2-state: before the first edge the outputs are 0 where the other simulators have X, the X and Z handling above does not apply, and a clock that starts at 0 has no falling edge at time 0. Its lint warnings are fatal by default (`-Wno-fatal` relaxes that for sources of your own); the wrapper builds without warnings. Verilator needs a C++ compiler and `make`, and uses `ccache` when it was built with it.
 - GHDL with cocotb ends the simulation at once when the test writes nothing at time 0: start the clock or set a port at time 0, as the tests do.
 - Speed: in a plain HDL testbench (stimulus in memory, CPU time, 1024 points, 3.4 M clocks) NVC runs the stand-in 2.1 times and GHDL 1.2 times as fast as XSim, or 2.5 and 1.8 times when the testbench's own cost is left out. Under cocotb the Python side's cost differs per simulator: `tests/test_xfft_trace.py` at 1024 points (950 000 clocks) took 270 s on XSim, 102 s on NVC and 105 s on GHDL, about 2.7 times as fast. NVC and GHDL build in a second.
+
+## Several configurations in one simulation
+
+A design with cores of different configurations (say a 256-point and a 512-point core) simulates each with its own stand-in. Give every configuration its own `module`: all names of its stand-in follow from it, so that the libraries, packages and wrappers of the configurations do not collide.
+
+| Name | module `xfft_core` | any other module `<module>` |
+|---|---|---|
+| SV module, VHDL entity | `xfft_core` (in SV the macro `XFFT_CORE_NAME`) | `<module>` |
+| package (SV and VHDL), its files | `xfft_model_pkg`, `<dir>/xfft_model_pkg.sv`, `.vhdl` | `<module>_pkg`, `<dir>/<module>_pkg.sv`, `.vhdl` |
+| wrappers | `model/xfft_engine.sv`, `model/xfft_engine.vhdl` | the copies `<dir>/<module>.sv`, `<dir>/<module>.vhdl` |
+| library | `<dir>/libxfft_engine.so` | `<dir>/lib<module>_engine.so` |
+| C functions | `xfft_engine_new`, `_step`, `_free`, `_wallclock` | `<module>_engine_new`, `_step`, `_free`, `_wallclock` |
+
+`xfft_config.XfftConfig` has them as `module`, `model_package` and `engine_prefix`. A module is a VHDL basic identifier (a letter, then letters and digits, single underscores between them). The modules `xfft`, `xfft_model` and `xfft_engine`, and any that differ from `xfft_core` or from them only in case, are refused: their names would be the default's (VHDL names do not depend on case). For the same reason, two modules in one VHDL simulation must differ in more than case. Two instances of one configuration need nothing of this: they share one library, each instance with its own engine.
+
+Build every configuration into its own directory, with its own `XFFT_CONFIG`. The module's name does not change the timing: a configuration whose module is not `xfft_core` has its own tag, ending in `_<module>`, and takes the constants found under that tag, else those of the same configuration with module `xfft_core` (`TABLE`, `timing/`, the measured file), so the constants that ship apply under any module:
+
+```sh
+python scripts/build_engine.py build/fft_a                    # module xfft_core, 1024 points
+XFFT_CONFIG=nfft=9,input_width=18,twiddle_width=18,rounding=truncation,clock_mhz=250,module=xfft_b \
+    python scripts/build_engine.py build/fft_b
+```
+
+Then compile every package and wrapper (in one library: their names differ) and load or link every library:
+
+| Simulator | Compile | Load or link the libraries |
+|---|---|---|
+| XSim | `xvlog -sv build/fft_a/xfft_model_pkg.sv model/xfft_engine.sv build/fft_b/xfft_b_pkg.sv build/fft_b/xfft_b.sv ...` | `xelab ... -sv_root build/fft_a -sv_lib libxfft_engine -sv_root build/fft_b -sv_lib libxfft_b_engine` |
+| Riviera-PRO | `alog -sv -timescale 1ns/1ps` with the same files | `asim -sv_lib build/fft_a/libxfft_engine -sv_lib build/fft_b/libxfft_b_engine ...` |
+| Verilator | the same files | both libraries as file arguments, `-LDFLAGS "-Wl,-rpath,<dir> -Wl,-rpath-link,<dir>/cmodel"` for each directory |
+| NVC | `nvc --std=2008 -a build/fft_a/xfft_model_pkg.vhdl model/xfft_engine.vhdl build/fft_b/xfft_b_pkg.vhdl build/fft_b/xfft_b.vhdl ...` | `LD_PRELOAD=<abs>/build/fft_a/libxfft_engine.so:<abs>/build/fft_b/libxfft_b_engine.so nvc ... -r` |
+| GHDL | `ghdl -a --std=08` with the same files | `ghdl -e --std=08 -Wl,<lib> -Wl,-Wl,-rpath,<dir> -Wl,-Wl,-rpath-link,<dir>/cmodel` for each library and its directory |
+
+Notes:
+
+- Do not set `XFFT_ENGINE_NAME` or `XFFT_CORE_NAME` for the whole compilation when several stand-ins are in it: `model/xfft_engine.sv` takes its module name from them, and the copies for other modules take `` `XFFT_ENGINE_NAME `` (only that one) over their own. The wrappers only read these macros; they define none, so nothing leaks from one wrapper into the files after it.
+- A testbench that imports a package names it: `` import xfft_b_pkg::*; `` or, for two configurations side by side, qualified names (`xfft_model_pkg::XFFT_DATA_WIDTH`, `work.xfft_b_pkg.XFFT_DATA_WIDTH`). `tests/timing/tb_xfft_timing.sv`, `tests/xfft_pair.sv` and `examples/plain_xsim/tb_tone.sv` take the package's name from `` `XFFT_MODEL_PKG `` (default `xfft_model_pkg`), and `tests/timing/tb_xfft_timing.sv` the C name of `xfft_engine_wallclock` from `` `XFFT_ENGINE_WALLCLOCK `` (default `xfft_engine_wallclock`). A testbench of your own that uses `` `XFFT_CORE_NAME `` defines its own default (`` `ifndef XFFT_CORE_NAME `` ..., as `tb_tone.sv` does): the wrapper no longer defines it.
+- With the cocotb infrastructure, pass one stand-in per configuration: `hdl_sources.xfft_engine(cfg, timing_only=..., constants=...)` builds for `cfg` whatever `XFFT_CONFIG` the test process has (its build gets `XFFT_CONFIG=cfg.spec` and, when given, `XFFT_TIMING_JSON=constants`), and `sim_runner.run(sources=[model_a, model_b, *your_sources], ...)` builds each into `dpi/<prefix>/` (its C prefix, e.g. `dpi/xfft_b_engine/`) and loads or links all of them on every simulator. `tests/test_xfft_multi.py` does this: two instances of one configuration and one of another in one simulation, on every installed simulator, each instance's handshakes compared with the same traffic on its configuration alone. With `XFFT_MULTI_CMODEL=1` it builds the stand-ins with the C model and sends random data, so the output words are compared too, and each output frame is checked against a floating-point FFT; `XFFT_MULTI_A` and `XFFT_MULTI_B` (`XFFT_CONFIG` syntax) replace its two configurations.
 
 ## The stand-in and the real core in Riviera-PRO
 
@@ -234,7 +272,7 @@ All the timing rules, clock by clock, are in the docstring of `model/xfft_timing
 |---|---|
 | `xfft_engine: xfft_model.h has no timing constants for this configuration` | No constants for the tag: characterize it (`python -m characterize ... --out timing/`) or check `XFFT_CONFIG` against the shipped tags |
 | `xfft_engine: xfft_model.h does not fit this model (...)` | The constants break an assumption of the stand-in (listed in the message); the core behaves in a way the stand-in cannot express |
-| `xfft_engine: the HDL's configuration (...) is not the one this library was built for` | the package and the library are of different configurations: rerun `build_engine.py` with the `XFFT_CONFIG` of the HDL build |
+| `xfft_engine: the HDL's configuration (...) is not the one this library was built for` | the package and the library are of different configurations: rerun `build_engine.py` with the `XFFT_CONFIG` of the HDL build. Two configurations in one simulation need different modules (each its own library, [above](#several-configurations-in-one-simulation)) |
 | `FFT_MODEL=cmodel is no longer supported` | the stand-in is `FFT_MODEL=engine` |
 | `no timing constants for <tag>` (Python) | as above, from the tests or the timing bench |
 | `vivado failed (1), see build/<tag>/ip_gen/vivado.log` | the IP could not be generated: the part or the xfft IP is not installed, or a parameter is out of range; the log names it |

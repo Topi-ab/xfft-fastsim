@@ -12,6 +12,7 @@ FFT_MODEL:
 from __future__ import annotations
 
 import os
+from pathlib import Path
 
 import pytest
 
@@ -76,11 +77,11 @@ def xfft_ip(cfg: xfft_config.XfftConfig):
     return VivadoIp(cfg.xci, builder_tcl=cfg.write_builder_tcl(), part_num=cfg.part)
 
 
-def engine_inputs(cfg: xfft_config.XfftConfig, timing_only: bool = False) -> tuple:
+def engine_inputs(cfg: xfft_config.XfftConfig, timing_only: bool = False, constants: Path | None = None) -> tuple:
     """The files the stand-in is made of: its files in model/, the modules its build script imports, the C-model
     archive of the generated core (generate_ip.py runs Vivado if the core is not there yet) and the measured
-    constants. timing_only: model/xfft_dpi_stub.c instead of xfft_dpi.c and the C-model archive (no Vivado)."""
-    measured = xfft_timing.source_file(cfg)
+    constants (constants: the file the build reads as XFFT_TIMING_JSON, else as model/xfft_timing.py finds them).
+    timing_only: model/xfft_dpi_stub.c instead of xfft_dpi.c and the C-model archive (no Vivado)."""
     shim = "xfft_dpi_stub.c" if timing_only else "xfft_dpi.c"
     inputs = [MODEL_DIR / f for f in ("xfft_engine.c", "xfft_engine.h", shim, "xfft_engine.sv",
                                       "xfft_engine.vhdl", "xfft_config.py", "xfft_timing.py", "cmodel_archive.py")]
@@ -93,23 +94,40 @@ def engine_inputs(cfg: xfft_config.XfftConfig, timing_only: bool = False) -> tup
             raise RuntimeError(f"the C model of {cfg.tag} comes with the generated core, which needs Vivado once "
                                f"({e.filename} not found): run scripts/generate_ip.py where Vivado is "
                                f"installed") from e
-    if measured is not None and (cfg.tag not in xfft_timing.TABLE or xfft_timing.override_file() is not None):
-        inputs.append(measured)
+    if constants is not None:
+        if not Path(constants).is_file():
+            raise FileNotFoundError(f"{cfg.tag}: constants {constants}: no such file")
+        inputs.append(Path(constants))
+    else:
+        measured = xfft_timing.source_file(cfg)
+        if measured is not None:
+            inputs.append(measured)
     return tuple(inputs)
 
 
-def xfft_engine(cfg: xfft_config.XfftConfig, timing_only: bool = False) -> DpiModel:
+def xfft_engine(cfg: xfft_config.XfftConfig, timing_only: bool = False, constants: Path | None = None) -> DpiModel:
     """The stand-in: the SV wrapper (XSim, Verilator, Riviera) or the VHDL wrapper (NVC, GHDL) with the core's
-    name and ports, the C engine and the C model in libxfft_engine.so (scripts/build_engine.py). timing_only: the
-    engine without the C model (scripts/build_engine.py --timing-only: no Vivado, every output sample 0)."""
-    vhdl = MODEL_DIR / "xfft_engine.vhdl" if cfg.module == "xfft_core" else "xfft_engine.vhdl"
+    name and ports, the C engine and the C model in its library (scripts/build_engine.py). timing_only: the engine
+    without the C model (scripts/build_engine.py --timing-only: no Vivado, every output sample 0).
+
+    The model is built for cfg, whatever XFFT_CONFIG the process has: its build gets XFFT_CONFIG=cfg.spec, and
+    XFFT_TIMING_JSON=constants (the timing constants of cfg, e.g. a file in timing/), else the XFFT_TIMING_JSON the
+    process has now, else none (model/xfft_timing.py looks them up). Its names follow cfg.module
+    (scripts/build_engine.py): models of configurations with different modules can share one simulation
+    (sim_runner.run() with several of them among its sources)."""
+    default = cfg.module == xfft_config.DEFAULT_MODULE
+    constants = constants if constants is not None else xfft_timing.override_file()
+    if constants is not None:
+        constants = Path(constants).resolve()
+    pkg = cfg.model_package
     return DpiModel(
-        name="xfft_engine",
+        name=cfg.engine_prefix,
         build=SCRIPTS / "build_engine.py",
-        sources=("xfft_model_pkg.sv", MODEL_DIR / "xfft_engine.sv"),
-        vhdl_sources=("xfft_model_pkg.vhdl", vhdl),
-        inputs=engine_inputs(cfg, timing_only),
+        sources=(f"{pkg}.sv", MODEL_DIR / "xfft_engine.sv" if default else f"{cfg.module}.sv"),
+        vhdl_sources=(f"{pkg}.vhdl", MODEL_DIR / "xfft_engine.vhdl" if default else f"{cfg.module}.vhdl"),
+        inputs=engine_inputs(cfg, timing_only, constants),
         build_args=("--timing-only",) if timing_only else (),
+        env=(("XFFT_CONFIG", cfg.spec), ("XFFT_TIMING_JSON", "" if constants is None else str(constants))),
     )
 
 

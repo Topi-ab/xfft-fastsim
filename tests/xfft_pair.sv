@@ -8,9 +8,13 @@
 `ifndef XFFT_ENGINE_NAME
 `define XFFT_ENGINE_NAME xfft_engine_model
 `endif
+// The configuration's package (xfft_model_pkg for module xfft_core, else <module>_pkg)
+`ifndef XFFT_MODEL_PKG
+`define XFFT_MODEL_PKG xfft_model_pkg
+`endif
 
 module xfft_pair
-    import xfft_model_pkg::*;
+    import `XFFT_MODEL_PKG::*;
 (
     input wire aclk,
     input wire aresetn,

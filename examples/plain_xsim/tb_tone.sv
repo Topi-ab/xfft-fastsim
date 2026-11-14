@@ -2,7 +2,7 @@
 //
 // The core is `XFFT_CORE_NAME (default xfft_core): the stand-in (the C engine's SV wrapper, model/xfft_engine.sv)
 // compiled under the core's name. All widths and the timing constants come from the generated package
-// xfft_model_pkg (scripts/build_engine.py), so the bench follows the configuration (XFFT_CONFIG).
+// (xfft_model_pkg, scripts/build_engine.py), so the bench follows the configuration (XFFT_CONFIG).
 //
 // It sends one config word (forward, SCALE_SCH 2 per stage, 1 in a radix-2 last stage: about 1/N in all), then
 // N samples of exp(2 pi i TONE n / N) at a quarter of full scale, and reads the N outputs. It checks that the
@@ -11,9 +11,13 @@
 `ifndef XFFT_CORE_NAME
 `define XFFT_CORE_NAME xfft_core
 `endif
+// The configuration's package: xfft_model_pkg for module xfft_core, else <module>_pkg
+`ifndef XFFT_MODEL_PKG
+`define XFFT_MODEL_PKG xfft_model_pkg
+`endif
 
 module tb_tone;
-    import xfft_model_pkg::*;
+    import `XFFT_MODEL_PKG::*;
 
     localparam int N = XFFT_N;
     localparam int W = XFFT_INPUT_WIDTH;

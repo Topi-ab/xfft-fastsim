@@ -82,7 +82,7 @@ A configuration is `model/xfft_config.XfftConfig`. The environment variable `XFF
 | `rounding` | `convergent` | `convergent`, `truncation` | rounding mode of the core |
 | `part` | `xc7a35tcpg236-1` | any installed part | the FPGA part the core is generated for |
 | `clock_mhz` | 100 | whole MHz | target clock frequency of the IP |
-| `module` | `xfft_core` | a module name | the generated core's name, and the stand-in's |
+| `module` | `xfft_core` | a module name | the generated core's name, and the stand-in's; its package, library and C functions are named after it, so that configurations with different modules can share one simulation ([docs/USER_GUIDE.md](docs/USER_GUIDE.md#several-configurations-in-one-simulation)) |
 | `scaling` | `scaled` | `scaled` | fixed scaling with a per-frame schedule (the only one supported) |
 
 Fixed by `ip/xfft_core.tcl`: pipelined streaming I/O, fixed point, natural-order output, non-real-time throttling (the core honours `m_axis_data_tready`), `XK_INDEX` and `OVFLO` in `m_axis_data_tuser`, `aresetn`, no `aclken`, one channel. Forward or inverse and the scaling schedule come per frame on the config channel.
@@ -147,7 +147,7 @@ The stand-in is for speed. Sign-off, and anything it does not model, uses the re
 | `tests/unit/` | tests that need no Vivado |
 | `tests/reference/` | the real core's timing in the characterization cases of 949 configurations, for `tests/test_timing_reference.py` |
 | `examples/` | examples, each runnable with one command |
-| `VERSION`, `CHANGELOG.md` | the version (0.1.0) and the changes |
+| `VERSION`, `CHANGELOG.md` | the version (0.2.0) and the changes |
 
 ## Licence
 

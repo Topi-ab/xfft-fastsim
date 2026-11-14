@@ -24,8 +24,9 @@ jobs:
       - run: python -m characterize --nfft 8 --dry-run
 
   timing:
-    # The stand-in's timing against stored real-core results (tests/test_timing_reference.py): the C engine built
-    # timing-only (no Vivado, no C model), on NVC and GHDL, the simulators' own Ubuntu 24.04 releases
+    # The stand-in's timing against stored real-core results (tests/test_timing_reference.py) and several
+    # configurations in one simulation (tests/test_xfft_multi.py): the C engine built timing-only (no Vivado, no C
+    # model), on NVC and GHDL, the simulators' own Ubuntu 24.04 releases
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
@@ -43,3 +44,5 @@ jobs:
       - run: pip install -r requirements.txt
       - run: nvc --version && ghdl --version
       - run: python -m pytest tests/test_timing_reference.py -rA
+      # Several configurations in one simulation (each stand-in its own library), on the same two simulators
+      - run: python -m pytest tests/test_xfft_multi.py -rA

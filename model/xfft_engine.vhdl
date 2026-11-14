@@ -9,8 +9,9 @@ use work.xfft_model_pkg.all;
 -- of aclk it passes the sampled inputs to xfft_engine_step and drives every output from the result; it makes no
 -- timing decisions. The same engine serves XSim and Verilator through model/xfft_engine.sv.
 -- Same entity name and ports as the generated core (its vendor port names, hence no _in/_out suffixes), widths
--- from the generated package xfft_model_pkg (scripts/build_engine.py, which also writes a copy of this file under
--- another entity name when the configuration's module is not xfft_core).
+-- from the generated package xfft_model_pkg. This file is for module xfft_core (the C functions xfft_engine_*); for
+-- any other module scripts/build_engine.py writes a copy of it with that module's names (entity <module>, package
+-- <module>_pkg, the C functions <module>_engine_*), and several configurations can share one simulation.
 -- Before the first edge both tready and event_status_channel_halt are '0', the other outputs 'X'; from the first
 -- edge on every output is known. Input bits: '1'/'H' are 1, '0'/'L' are 0, any other value is passed as unknown
 -- (XE_UNKNOWN), which the engine evaluates as SV's `&&` and `!` treat X (xfft_engine.h); unknown bits of the

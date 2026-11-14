@@ -26,7 +26,7 @@ def main(out: Path) -> None:
         constants = json.loads(path.read_text())["constants"]
         xfft_timing.constants = lambda c=None: dict(constants)     # what build_engine.build() asks for
         source = f"build/characterize/out/{path.name}"
-    elif cfg.tag in xfft_timing.TABLE:
+    elif xfft_timing.table_tag(cfg) is not None:
         source = "TABLE in model/xfft_timing.py"
     elif xfft_timing.source_file(cfg) is not None:
         source = xfft_timing.source_file(cfg).relative_to(REPO).as_posix()
